@@ -1,703 +1,770 @@
 'use client'
 
-const scrollTo = (id: string) =>
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+import { useState, useEffect, useCallback, useRef } from 'react'
+import {
+  AlertTriangle, BarChart2, BookOpen, Calendar, CheckCircle,
+  ChevronLeft, ChevronRight, Cloud, DollarSign, FileText,
+  Layers, Settings, Shield, TrendingUp, Users, Clock,
+  Target, Activity, Database, Lock, Zap, Award, Server,
+} from 'lucide-react'
 
-const NAV = [
-  { id: 'inicio', label: 'Inicio' },
-  { id: 'contexto', label: 'Contexto' },
-  { id: 'objetivos', label: 'Objetivos' },
-  { id: 'presupuesto', label: 'Presupuesto' },
-  { id: 'cronograma', label: 'Cronograma' },
-  { id: 'equipo', label: 'Equipo' },
-  { id: 'comunicacion', label: 'Comunicación' },
-]
-
-const CAPEX_PHASES = [
-  { phase: '1.1 Gestión y Gobernanza', hours: 124, cost: 6200 },
-  { phase: '1.2 Infraestructura Cloud y Azure', hours: 292, cost: 11080 },
-  { phase: '1.3 Parametrización e Implementación ERP', hours: 672, cost: 28320 },
-  { phase: '1.4 Migración de Datos y Pruebas', hours: 436, cost: 18760 },
-  { phase: '1.5 Gestión del Cambio y Capacitación', hours: 1340, cost: 63800 },
-]
-const CAPEX_TOTAL = 128160
-
-const OPEX_ITEMS = [
-  { label: 'Licencia SaaS ERP', monthly: 455, desc: 'Módulos financieros, logísticos y contables' },
-  { label: 'Licencia SaaS RRHH', monthly: 250, desc: 'Módulo de RRHH y planillas' },
-  { label: 'Infraestructura Cloud', monthly: 135, desc: 'Microsoft Azure · 99.97% SLA' },
-  { label: 'Soporte Técnico 24/7', monthly: 70, desc: 'Resolución de tickets conforme a SLA' },
-]
-
-const CASH_FLOW = [
-  { period: 'Jun 2026', activity: 'Gobernanza + Infraestructura + Parametrización + Migración (inicio)', capex: 34640, opex: null },
-  { period: 'Jul 2026', activity: 'Seguridad + Parametrización (fin) + Pruebas unitarias + Manuales', capex: 33120, opex: null },
-  { period: 'Ago 2026', activity: 'Pruebas en sitio + Manuales (fin) + Plan de capacitación', capex: 12800, opex: null },
-  { period: 'Sep 2026', activity: 'Go-Live (02/09) · Capacitación + Índice de adopción + Soporte', capex: 26200, opex: 910, highlight: true },
-  { period: 'Oct 2026', activity: 'Soporte post-implementación + Cierre contractual (28/10)', capex: 21400, opex: 910 },
-  { period: 'Nov 2026 – May 2028', activity: 'Servicio SaaS activo (19 meses restantes del contrato)', capex: null, opex: 17290 },
-]
-
-const TIMELINE = [
-  {
-    month: 'JUN', year: '2026', label: 'Inicio', accent: 'bg-slate-900',
-    items: ['Acta constitutiva', 'Infraestructura Azure', 'Parametrización ERP', 'Migración datos'],
-  },
-  {
-    month: 'JUL', year: '2026', label: 'Desarrollo', accent: 'bg-slate-700',
-    items: ['Seguridad PBAC', 'Fin parametrización', 'Pruebas unitarias', 'Manuales (inicio)'],
-  },
-  {
-    month: 'AGO', year: '2026', label: 'Pruebas UAT', accent: 'bg-slate-600',
-    items: ['Pruebas en sitio', 'Fin manuales', 'Plan de capacitación', 'Aprobaciones UAT'],
-  },
-  {
-    month: 'SEP', year: '2026', label: 'Go-Live', accent: 'bg-blue-600', highlight: true,
-    items: ['Go-Live 02/09', 'Capacitación', 'Índice adopción', 'Soporte activo'],
-  },
-  {
-    month: 'OCT', year: '2026', label: 'Cierre', accent: 'bg-emerald-700',
-    items: ['Soporte post-impl.', 'Estabilización', 'Cierre contractual', '28/10 — SICOP'],
-  },
-]
-
-const CONSULTANTS = [
-  { name: 'Josué Montero', role: 'Director del Proyecto', hours: 336, cost: 16800, rate: 50 },
-  { name: 'Pablo Alvarado', role: 'Líder Infraestructura Cloud', hours: 472, cost: 23600, rate: 50 },
-  { name: 'Erick Torres', role: 'Líder Costos y Adquisiciones', hours: 276, cost: 13800, rate: 50 },
-  { name: 'Kristel Duarte', role: 'Líder Gestión del Cambio', hours: 480, cost: 24000, rate: 50 },
-  { name: 'Siandi Araya', role: 'Asistente Técnico / Analista Funcional', hours: 548, cost: 27400, rate: 50 },
-]
-
-const TECHNICAL = [
-  { name: 'Ingeniero Cloud', role: 'Ejecutor Técnico · Azure', hours: 136, cost: 4080, rate: 30 },
-  { name: 'Consultor ERP', role: 'Ejecutor Técnico · Parametrización', hours: 416, cost: 12480, rate: 30 },
-  { name: 'Especialista Seguridad', role: 'Ejecutor Técnico · Ciberseguridad', hours: 104, cost: 3120, rate: 30 },
-  { name: 'Ingeniero Datos', role: 'Ejecutor Técnico · Migración', hours: 96, cost: 2880, rate: 30 },
-]
-
-const fmt = (n: number) => `$${n.toLocaleString('en-US')}`
-
-function Initials({ name }: { name: string }) {
-  const parts = name.split(' ')
-  return <>{parts[0][0]}{parts[1]?.[0] ?? ''}</>
+const C = {
+  primary:   '#1F5E4A',
+  secondary: '#5F8D7A',
+  white:     '#FFFFFF',
+  bgAlt:     '#F0F5F3',
+  text:      '#1F2933',
+  accent:    '#A7D7C5',
+  danger:    '#C0392B',
+  warning:   '#D68910',
+  success:   '#1E8449',
+  light:     '#D4EDE5',
+  muted:     '#637074',
 }
 
-function SectionHeader({ n, title, sub }: { n: string; title: string; sub: string }) {
+// ─── Shared UI ────────────────────────────────────────────────────────────────
+
+function Label({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-3 mb-14">
-      <span className="text-8xl font-light leading-none select-none text-slate-100 -mt-4">{n}</span>
-      <div>
-        <h2 className="text-3xl font-light text-slate-900 leading-snug">{title}</h2>
-        <p className="text-sm text-slate-400 mt-1">{sub}</p>
+    <div style={{ color: C.secondary, fontSize: 11, letterSpacing: 2.5, fontWeight: 700, marginBottom: 10, textTransform: 'uppercase' }}>
+      {children}
+    </div>
+  )
+}
+
+function HBar({ label, pct, color, note }: { label: string; pct: number; color: string; note: string }) {
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+        <span style={{ fontSize: 13, color: C.text, fontWeight: 600 }}>{label}</span>
+        <span style={{ fontSize: 12, color, fontWeight: 700 }}>{note}</span>
+      </div>
+      <div style={{ background: C.light, borderRadius: 4, height: 8 }}>
+        <div style={{ background: color, width: `${pct}%`, height: 8, borderRadius: 4 }} />
       </div>
     </div>
   )
 }
 
-export default function Home() {
+function StatCard({ label, value, sub, color = C.primary }: { label: string; value: string; sub: string; color?: string }) {
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div style={{ background: C.white, borderRadius: 10, padding: '20px 22px', boxShadow: '0 1px 6px rgba(0,0,0,0.08)', borderTop: `3px solid ${color}` }}>
+      <div style={{ fontSize: 28, fontWeight: 900, color }}>{value}</div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginTop: 4 }}>{label}</div>
+      <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{sub}</div>
+    </div>
+  )
+}
 
-      {/* ── Navigation ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3 text-xs">
-            <span className="font-semibold text-slate-800 tracking-wide uppercase">SINART</span>
-            <span className="w-px h-3 bg-slate-300" />
-            <span className="text-slate-500">ERP &amp; RRHH · 2026</span>
-          </div>
-          <div className="hidden md:flex items-center gap-7">
-            {NAV.map(({ id, label }) => (
-              <button
-                key={id}
-                onClick={() => scrollTo(id)}
-                className="text-xs font-medium uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors"
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+function RiskBadge({ level }: { level: 'EXTREMO' | 'ALTO' | 'MODERADO' | 'BAJO' }) {
+  const map = {
+    EXTREMO: '#8B0000',
+    ALTO:    C.danger,
+    MODERADO: C.warning,
+    BAJO:    C.success,
+  }
+  return (
+    <span style={{ background: map[level], color: '#fff', fontSize: 10, fontWeight: 700, borderRadius: 4, padding: '2px 8px', letterSpacing: 1 }}>
+      {level}
+    </span>
+  )
+}
+
+function MilestoneRow({ id, label, date, done }: { id: string; label: string; date: string; done?: boolean }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: `1px solid ${C.light}` }}>
+      <div style={{ width: 20, height: 20, borderRadius: '50%', background: done ? C.primary : C.light, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {done && <CheckCircle size={12} color={C.white} />}
+      </div>
+      <span style={{ fontSize: 11, fontWeight: 700, color: C.secondary, width: 40, flexShrink: 0 }}>{id}</span>
+      <span style={{ fontSize: 13, color: C.text, flex: 1 }}>{label}</span>
+      <span style={{ fontSize: 12, fontWeight: 600, color: C.primary, flexShrink: 0 }}>{date}</span>
+    </div>
+  )
+}
+
+function PhaseGantt({ phase, pct, offset, color, cost, days }: {
+  phase: string; pct: number; offset: number; color: string; cost: string; days: string
+}) {
+  return (
+    <div style={{ marginBottom: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: C.text }}>{phase}</span>
+        <div style={{ display: 'flex', gap: 16 }}>
+          <span style={{ fontSize: 11, color: C.muted }}>{days}</span>
+          <span style={{ fontSize: 11, color, fontWeight: 700 }}>{cost}</span>
         </div>
-      </nav>
+      </div>
+      <div style={{ background: C.light, borderRadius: 4, height: 12, position: 'relative' }}>
+        <div style={{ position: 'absolute', left: `${offset}%`, width: `${pct}%`, height: 12, borderRadius: 4, background: color }} />
+      </div>
+    </div>
+  )
+}
 
-      {/* ── 00 · Hero ── */}
-      <section id="inicio" className="min-h-screen flex flex-col justify-center pt-14">
-        <div className="max-w-7xl mx-auto px-6 py-24 w-full">
+// ─── Slides ───────────────────────────────────────────────────────────────────
 
-          <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-8">
-            EIF 500 · Administración de Proyectos · Universidad Nacional de Costa Rica · I Ciclo 2026
+function SlidePortada() {
+  return (
+    <div style={{ background: C.primary, height: '100%', display: 'flex' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '64px 72px' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(167,215,197,0.15)', border: '1px solid rgba(167,215,197,0.3)', borderRadius: 6, padding: '6px 14px', marginBottom: 32, width: 'fit-content' }}>
+          <BookOpen size={12} color={C.accent} />
+          <span style={{ color: C.accent, fontSize: 11, letterSpacing: 2, fontWeight: 700 }}>EIF 500 · ADMINISTRACIÓN DE PROYECTOS</span>
+        </div>
+        <h1 style={{ color: C.white, fontSize: 'clamp(26px,4vw,46px)', fontWeight: 800, lineHeight: 1.15, marginBottom: 16, maxWidth: 620 }}>
+          Contratación para la Implementación y Alquiler de Software ERP y RRHH en la Nube
+        </h1>
+        <p style={{ color: C.accent, fontSize: 16, marginBottom: 12, lineHeight: 1.6, maxWidth: 520 }}>
+          Arrendamiento Operativo bajo modalidad SaaS sobre Microsoft Azure para el SINART
+        </p>
+        <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, marginBottom: 48 }}>
+          MSc. Walter Díaz Argueta · I Ciclo 2026
+        </p>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {[
+            { name: 'Josué Montero', role: 'Director' },
+            { name: 'Pablo Alvarado', role: 'Cloud' },
+            { name: 'Erick Torres', role: 'Costos' },
+            { name: 'Kristel Duarte', role: 'Cambio' },
+            { name: 'Siandi Araya', role: 'Analista' },
+          ].map(m => (
+            <div key={m.name} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6, padding: '7px 14px' }}>
+              <div style={{ color: C.white, fontSize: 12, fontWeight: 600 }}>{m.name}</div>
+              <div style={{ color: C.accent, fontSize: 10 }}>{m.role}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ width: 280, background: 'rgba(0,0,0,0.15)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 24, padding: 32 }}>
+        {[
+          { icon: <DollarSign size={22} color={C.accent} />, v: '$150,000', l: 'Presupuesto USD' },
+          { icon: <Calendar size={22} color={C.accent} />, v: '108 días', l: 'Jun–Oct 2026' },
+          { icon: <Users size={22} color={C.accent} />, v: '9 recursos', l: '5 consult. + 4 téc.' },
+          { icon: <Cloud size={22} color={C.accent} />, v: '99.97%', l: 'SLA Azure' },
+        ].map(s => (
+          <div key={s.l} style={{ textAlign: 'center' }}>
+            <div style={{ marginBottom: 6 }}>{s.icon}</div>
+            <div style={{ color: C.white, fontSize: 20, fontWeight: 800 }}>{s.v}</div>
+            <div style={{ color: 'rgba(167,215,197,0.7)', fontSize: 11 }}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SlideAgenda() {
+  const items = [
+    { icon: <AlertTriangle size={20} color={C.danger} />, n: '01', title: 'Justificación', desc: 'El problema del SINART y por qué actuar ahora', color: C.danger },
+    { icon: <Cloud size={20} color={C.primary} />, n: '02', title: 'La Solución', desc: 'ERP + RRHH en la nube Azure — enfoque híbrido', color: C.primary },
+    { icon: <DollarSign size={20} color={C.warning} />, n: '03', title: 'Inversión', desc: 'Estructura CAPEX/OPEX · $150,000 USD · 2 años', color: C.warning },
+    { icon: <Calendar size={20} color={C.secondary} />, n: '04', title: 'Cronograma', desc: '108 días · 5 hitos · Go-Live 2/Sep/2026', color: C.secondary },
+    { icon: <TrendingUp size={20} color={C.success} />, n: '05', title: 'Beneficios', desc: 'Operacionales, financieros y normativos', color: C.success },
+    { icon: <Shield size={20} color={C.muted} />, n: '06', title: 'Riesgos', desc: '23 riesgos identificados · top críticos', color: C.muted },
+  ]
+  return (
+    <div style={{ padding: '52px 64px', background: C.bgAlt, height: '100%', boxSizing: 'border-box' }}>
+      <Label>Agenda</Label>
+      <h2 style={{ color: C.primary, fontSize: 32, fontWeight: 800, marginBottom: 32 }}>Estructura de la presentación</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
+        {items.map(it => (
+          <div key={it.n} style={{ background: C.white, borderRadius: 10, padding: '18px 20px', borderLeft: `4px solid ${it.color}`, boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+              {it.icon}
+              <span style={{ fontSize: 22, fontWeight: 900, color: it.color, opacity: 0.3 }}>{it.n}</span>
+            </div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: C.text, marginBottom: 4 }}>{it.title}</div>
+            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.4 }}>{it.desc}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginTop: 24, display: 'flex', gap: 24, padding: '12px 20px', background: C.light, borderRadius: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Clock size={14} color={C.primary} />
+          <span style={{ fontSize: 13, color: C.primary, fontWeight: 600 }}>20 min exposición</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Users size={14} color={C.primary} />
+          <span style={{ fontSize: 13, color: C.primary, fontWeight: 600 }}>5 min preguntas</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Award size={14} color={C.primary} />
+          <span style={{ fontSize: 13, color: C.primary, fontWeight: 600 }}>Simulación Junta Directiva SINART</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SlideJustificacion() {
+  return (
+    <div style={{ display: 'flex', height: '100%' }}>
+      <div style={{ background: C.primary, width: '40%', padding: '52px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <Label>01 — Justificación</Label>
+        <h2 style={{ color: C.white, fontSize: 28, fontWeight: 800, lineHeight: 1.2, marginBottom: 20 }}>
+          El SINART opera con gestión fragmentada y sin visibilidad en tiempo real
+        </h2>
+        <p style={{ color: C.accent, fontSize: 14, lineHeight: 1.7, marginBottom: 28 }}>
+          La institución carece de un sistema integrado para gestionar sus procesos financieros, administrativos y de recursos humanos. Cada área opera en silos, con herramientas inconexas y datos no auditables.
+        </p>
+        <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 10, padding: '16px 20px' }}>
+          <div style={{ color: C.accent, fontSize: 11, fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>OBJETIVO DEL PROYECTO</div>
+          <p style={{ color: C.white, fontSize: 13, lineHeight: 1.6, margin: 0 }}>
+            Centralizar la gestión financiera, administrativa y de planillas mediante una plataforma SaaS integrada, permitiendo visualizar en tiempo real los costos operativos y optimizar recursos públicos.
           </p>
-
-          <h1 className="text-5xl md:text-7xl font-extralight text-slate-900 leading-tight mb-6 max-w-4xl">
-            Implementación<br />
-            <span className="font-semibold">ERP &amp; RRHH</span><br />
-            en la Nube
-          </h1>
-
-          <p className="text-lg text-slate-500 max-w-2xl leading-relaxed mb-16">
-            Contratación para la modernización tecnológica del Sistema Nacional de Radio y Televisión
-            de Costa Rica mediante una plataforma SaaS unificada sobre Microsoft Azure.
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
-            {[
-              { value: '108', label: 'Días de implementación', accent: true },
-              { value: '$150K', label: 'Presupuesto total USD', accent: false },
-              { value: '9', label: 'Recursos del equipo', accent: false },
-              { value: '24', label: 'Meses contrato SaaS', accent: false },
-            ].map(({ value, label, accent }) => (
-              <div key={label} className={`border-l-2 pl-4 ${accent ? 'border-blue-600' : 'border-slate-200'}`}>
-                <div className="text-4xl font-light text-slate-900">{value}</div>
-                <div className="text-xs text-slate-400 uppercase tracking-wide mt-1">{label}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="border-t border-slate-100 pt-8 grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { label: 'Cliente', value: 'SINART S.A.' },
-              { label: 'Director del Proyecto', value: 'Josué Montero' },
-              { label: 'Fecha de Inicio', value: '1 de junio, 2026' },
-              { label: 'Cierre Contractual', value: '28 de octubre, 2026' },
-            ].map(({ label, value }) => (
-              <div key={label}>
-                <div className="text-xs uppercase tracking-widest text-slate-400 mb-1">{label}</div>
-                <div className="text-sm font-medium text-slate-800">{value}</div>
-              </div>
-            ))}
-          </div>
         </div>
-      </section>
-
-      {/* ── 01 · Contexto ── */}
-      <section id="contexto" className="bg-slate-50 py-28">
-        <div className="max-w-7xl mx-auto px-6">
-          <SectionHeader n="01" title="Contexto y Justificación" sub="Situación actual del SINART y propósito del proyecto" />
-
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-5">El Problema</h3>
-              <p className="text-slate-700 leading-relaxed mb-6">
-                El SINART enfrenta retos operativos críticos debido a la{' '}
-                <strong className="font-semibold text-slate-900">fragmentación de su información</strong>{' '}
-                financiera, administrativa y de planillas, procesada en sistemas aislados o de forma manual.
-                Esto limita la visibilidad en tiempo real de los costos de producción y la toma de
-                decisiones estratégicas.
-              </p>
-              <ul className="space-y-3">
-                {[
-                  'Sistemas de información aislados y desconectados',
-                  'Procesamiento manual de planillas y datos financieros',
-                  'Sin visibilidad en tiempo real de costos de producción',
-                  'Toma de decisiones estratégicas sin datos integrados',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-slate-600">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+      </div>
+      <div style={{ flex: 1, padding: '52px 44px', background: C.bgAlt, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 18 }}>Problemas identificados en el SINART</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          {[
+            { icon: <Layers size={18} color={C.danger} />, title: 'Procesos fragmentados', desc: 'Finanzas, compras, RRHH y planillas operan en sistemas desconectados sin integración.' },
+            { icon: <Database size={18} color={C.danger} />, title: 'Sin trazabilidad de datos', desc: 'Registros en Excel y papel. Imposible auditar o rastrear cambios históricos.' },
+            { icon: <FileText size={18} color={C.warning} />, title: 'Riesgo de Contraloría', desc: 'Exposición a sanciones de la CGR y la CCSS por falta de pistas de auditoría digital.' },
+            { icon: <BarChart2 size={18} color={C.warning} />, title: 'Decisiones sin información', desc: 'La Dirección Ejecutiva no tiene acceso a costos operativos reales en tiempo real.' },
+          ].map(p => (
+            <div key={p.title} style={{ background: C.white, borderRadius: 10, padding: 18, boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
+              <div style={{ marginBottom: 8 }}>{p.icon}</div>
+              <div style={{ fontWeight: 700, color: C.text, fontSize: 13, marginBottom: 5 }}>{p.title}</div>
+              <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.5 }}>{p.desc}</div>
             </div>
-
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-5">La Solución</h3>
-              <p className="text-slate-700 leading-relaxed mb-6">
-                Modernizar y centralizar la gestión institucional mediante un{' '}
-                <strong className="font-semibold text-slate-900">sistema ERP y RRHH unificado</strong>{' '}
-                bajo el modelo SaaS en infraestructura Microsoft Azure de nivel empresarial, garantizando
-                el cumplimiento legal y normativo del sector público costarricense.
-              </p>
-              <ul className="space-y-3">
-                {[
-                  'Plataforma ERP + RRHH integrada en la nube (SaaS)',
-                  'Microsoft Azure con disponibilidad garantizada del 99.97%',
-                  'Automatización de flujos de trabajo institucionales',
-                  'Gestión vía plataforma SICOP conforme a derecho público',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-slate-600">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
-
-      {/* ── 02 · Objetivos ── */}
-      <section id="objetivos" className="py-28">
-        <div className="max-w-7xl mx-auto px-6">
-          <SectionHeader n="02" title="Objetivos del Proyecto" sub="Triple restricción ampliada: Alcance · Tiempo · Costo" />
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                n: '01',
-                title: 'Alcance y Calidad',
-                body: 'Implementar el 100% de los módulos críticos adquiridos y desplegar un plan integral de gestión del cambio organizacional.',
-                criterion: 'Aprobación formal del 100% de los casos de prueba UAT por las jefaturas fiscalizadoras de cada departamento del SINART.',
-                tags: ['Financiero', 'Administrativo', 'Recursos Humanos', 'Control de Planillas'],
-              },
-              {
-                n: '02',
-                title: 'Tiempo y Cronograma',
-                body: 'Cumplir estrictamente la ventana de 108 días con Go-Live modular el 1 de septiembre de 2026 y cierre operativo el 28 de octubre.',
-                criterion: 'Plazo institucional inamovible. Cualquier desviación en hitos críticos afecta los compromisos legales en SICOP.',
-                tags: ['Go-Live: 01/09/2026', 'Cierre: 28/10/2026', '108 días', 'SICOP'],
-              },
-              {
-                n: '03',
-                title: 'Costos y Presupuesto',
-                body: 'Mantener la inversión de implementación y los costos de licenciamiento dentro del techo contractual de $150,000 USD.',
-                criterion: 'Registro preciso de cada orden de compra y avance de contrato en la plataforma de contratación pública SICOP.',
-                tags: ['CAPEX: $128,160', 'OPEX: $21,840', 'Total: $150,000', 'SICOP'],
-              },
-            ].map(({ n, title, body, criterion, tags }) => (
-              <div
-                key={n}
-                className="border border-slate-100 rounded-xl p-8 flex flex-col hover:border-blue-200 hover:shadow-sm transition-all"
-              >
-                <div className="text-5xl font-extralight text-slate-100 mb-6 leading-none">{n}</div>
-                <h3 className="text-base font-semibold text-slate-900 mb-3">{title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed mb-4 flex-1">{body}</p>
-                <div className="bg-blue-50 rounded-lg p-3 text-xs text-blue-800 leading-relaxed mb-5">
-                  <span className="font-semibold">Criterio de éxito: </span>{criterion}
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {tags.map((t) => (
-                    <span key={t} className="text-xs bg-slate-50 border border-slate-100 text-slate-600 px-2 py-1 rounded">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+        <div style={{ marginTop: 16, padding: '10px 16px', background: '#FEF9E7', borderRadius: 8, border: `1px solid ${C.warning}`, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <AlertTriangle size={16} color={C.warning} />
+          <span style={{ fontSize: 12, color: C.text }}>
+            <strong>Criterio de éxito primario:</strong> Aprobación y firma del 100% de los casos de prueba UAT por las Jefaturas Fiscalizadoras del SINART.
+          </span>
         </div>
-      </section>
+      </div>
+    </div>
+  )
+}
 
-      {/* ── 03 · Enfoque ── */}
-      <section className="bg-slate-900 py-28">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-start gap-3 mb-14">
-            <span className="text-8xl font-light leading-none select-none text-slate-800 -mt-4">03</span>
-            <div>
-              <h2 className="text-3xl font-light text-white leading-snug">Enfoque Híbrido</h2>
-              <p className="text-sm text-slate-500 mt-1">Marcos predictivo y adaptativo integrados</p>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="border border-slate-700 rounded-xl p-8">
-              <div className="flex items-center gap-2 mb-5">
-                <span className="w-2 h-2 rounded-full bg-blue-400" />
-                <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400">Componente Predictivo</h3>
+function SlideSolucion() {
+  return (
+    <div style={{ display: 'flex', height: '100%' }}>
+      <div style={{ flex: 1, padding: '52px 44px', background: C.bgAlt }}>
+        <Label>02 — La Solución</Label>
+        <h2 style={{ color: C.primary, fontSize: 30, fontWeight: 800, marginBottom: 8 }}>ERP + RRHH integrado en la nube</h2>
+        <p style={{ color: C.muted, fontSize: 13, marginBottom: 24, lineHeight: 1.5 }}>
+          Plataforma SaaS sobre Microsoft Azure bajo arrendamiento operativo — sin inversión en infraestructura física.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          {[
+            { icon: <DollarSign size={16} color={C.primary} />, name: 'Módulos Financieros', items: ['Contabilidad General', 'Control Presupuestario', 'Compras e Inventario', 'Activos Fijos'] },
+            { icon: <Users size={16} color={C.primary} />, name: 'Módulos RRHH y Planillas', items: ['Expedientes de empleados', 'Cálculo CCSS/INS/Renta', 'Evaluación de desempeño', 'Control de vacaciones'] },
+            { icon: <Server size={16} color={C.secondary} />, name: 'Infraestructura Azure', items: ['Servidores virtuales y BD', 'Redundancia geográfica', 'Backups automáticos diarios', 'Firewall y encriptación'] },
+            { icon: <Lock size={16} color={C.secondary} />, name: 'Seguridad PBAC', items: ['Roles y perfiles por área', 'Acceso solo a datos propios', 'ISO 27001 / SOC 2', 'Monitoreo continuo 24/7'] },
+          ].map(m => (
+            <div key={m.name} style={{ background: C.white, borderRadius: 10, padding: '16px 18px', borderTop: `3px solid ${C.primary}`, boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                {m.icon}
+                <span style={{ fontWeight: 700, color: C.text, fontSize: 13 }}>{m.name}</span>
               </div>
-              <p className="text-slate-400 text-sm leading-relaxed mb-5">
-                Aplicado de manera estricta en la gestión de costos, gobernanza contractual y reportes
-                financieros en SICOP. El marco normativo de la contratación pública costarricense exige
-                planificación detallada desde el inicio del ciclo de vida.
-              </p>
-              <ul className="space-y-2">
-                {['Gestión de costos y presupuesto', 'Gobernanza contractual (SICOP)', 'Adquisiciones del Estado', 'Control de entregables formales', 'Fecha límite inamovible: 28/10/2026'].map((i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm text-slate-500">
-                    <span className="w-1 h-1 rounded-full bg-blue-400 flex-shrink-0" />
-                    {i}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="border border-slate-700 rounded-xl p-8">
-              <div className="flex items-center gap-2 mb-5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400">Componente Adaptativo</h3>
-              </div>
-              <p className="text-slate-400 text-sm leading-relaxed mb-5">
-                Utilizado en la parametrización modular, migración de datos, diseño de arquitectura cloud
-                y retroalimentación con usuarios finales. Permite entregas de valor incrementales y
-                ajustes rápidos antes del Go-Live.
-              </p>
-              <ul className="space-y-2">
-                {['Parametrización modular del software', 'Migración inicial de datos históricos', 'Arquitectura cloud interactiva (Azure)', 'Pruebas UAT con retroalimentación continua', 'Iteraciones rápidas previas al Go-Live'].map((i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm text-slate-500">
-                    <span className="w-1 h-1 rounded-full bg-emerald-400 flex-shrink-0" />
-                    {i}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 04 · Presupuesto ── */}
-      <section id="presupuesto" className="py-28">
-        <div className="max-w-7xl mx-auto px-6">
-          <SectionHeader n="04" title="Presupuesto del Proyecto" sub="Estructura CAPEX / OPEX · Techo contractual: $150,000 USD" />
-
-          {/* Overview cards */}
-          <div className="grid md:grid-cols-3 gap-5 mb-16">
-            <div className="bg-slate-900 text-white rounded-xl p-8">
-              <div className="text-xs uppercase tracking-widest text-slate-400 mb-2">Presupuesto Total</div>
-              <div className="text-4xl font-light mb-1">$150,000</div>
-              <div className="text-xs text-slate-400">Techo contractual · 2 años</div>
-            </div>
-            <div className="border border-slate-100 rounded-xl p-8">
-              <div className="text-xs uppercase tracking-widest text-slate-400 mb-2">CAPEX · 85.44%</div>
-              <div className="text-4xl font-light text-slate-900 mb-1">$128,160</div>
-              <div className="text-xs text-slate-500 mb-4">Implementación · Jun–Oct 2026 · 2,864 h</div>
-              <div className="h-1 bg-slate-100 rounded-full">
-                <div className="h-1 bg-slate-900 rounded-full" style={{ width: '85.44%' }} />
-              </div>
-            </div>
-            <div className="border border-slate-100 rounded-xl p-8">
-              <div className="text-xs uppercase tracking-widest text-slate-400 mb-2">OPEX · 14.56%</div>
-              <div className="text-4xl font-light text-slate-900 mb-1">$21,840</div>
-              <div className="text-xs text-slate-500 mb-4">SaaS · 24 meses · $910/mes</div>
-              <div className="h-1 bg-slate-100 rounded-full">
-                <div className="h-1 bg-blue-500 rounded-full" style={{ width: '14.56%' }} />
-              </div>
-            </div>
-          </div>
-
-          {/* CAPEX phases */}
-          <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-6">
-            CAPEX — Desglose por Fase
-          </h3>
-          <div className="space-y-3 mb-16">
-            {CAPEX_PHASES.map(({ phase, hours, cost }) => {
-              const pct = (cost / CAPEX_TOTAL) * 100
-              return (
-                <div key={phase} className="flex items-center gap-4">
-                  <div className="w-72 text-sm text-slate-600 flex-shrink-0 hidden md:block truncate">{phase}</div>
-                  <div className="flex-1 h-8 bg-slate-50 rounded-lg relative overflow-hidden border border-slate-100">
-                    <div
-                      className="h-full bg-slate-800 rounded-lg transition-all"
-                      style={{ width: `${pct}%` }}
-                    />
-                    <span className="absolute inset-0 flex items-center px-3 text-xs font-medium text-white">
-                      {fmt(cost)}
-                    </span>
-                  </div>
-                  <div className="text-xs text-slate-400 w-14 text-right flex-shrink-0">{hours}h</div>
-                </div>
-              )
-            })}
-            <div className="flex items-center gap-4 pt-2 border-t border-slate-100">
-              <div className="w-72 text-sm font-semibold text-slate-900 hidden md:block">Total CAPEX</div>
-              <div className="flex-1 text-sm font-semibold text-slate-900">{fmt(CAPEX_TOTAL)}</div>
-              <div className="text-xs text-slate-600 w-14 text-right font-medium">2,864h</div>
-            </div>
-          </div>
-
-          {/* OPEX */}
-          <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-6">
-            OPEX — Arrendamiento Mensual · $910/mes · 24 meses = $21,840
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-            {OPEX_ITEMS.map(({ label, monthly, desc }) => (
-              <div key={label} className="border border-slate-100 rounded-xl p-5">
-                <div className="text-2xl font-light text-slate-900 mb-1">
-                  ${monthly}<span className="text-xs text-slate-400 font-normal">/mes</span>
-                </div>
-                <div className="text-sm font-medium text-slate-700 mb-1">{label}</div>
-                <div className="text-xs text-slate-400 leading-relaxed">{desc}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Cash flow table */}
-          <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-6">
-            Flujo de Caja del Proyecto
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="border-b border-slate-100">
-                  {['Período', 'Actividad Principal', 'CAPEX', 'OPEX', 'Total'].map((h, i) => (
-                    <th
-                      key={h}
-                      className={`py-3 text-xs font-semibold uppercase tracking-widest text-slate-400 ${i > 1 ? 'text-right' : 'text-left'} ${i === 1 ? 'pr-8' : i > 0 ? 'pl-4' : 'pr-4'}`}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {CASH_FLOW.map((row) => {
-                  const total = (row.capex ?? 0) + (row.opex ?? 0)
-                  return (
-                    <tr
-                      key={row.period}
-                      className={`border-b border-slate-50 ${(row as { highlight?: boolean }).highlight ? 'bg-blue-50' : ''}`}
-                    >
-                      <td className="py-3 pr-4 font-medium text-slate-700 whitespace-nowrap">{row.period}</td>
-                      <td className="py-3 pr-8 text-slate-500 text-xs leading-relaxed">{row.activity}</td>
-                      <td className="py-3 pl-4 text-right text-slate-700">{row.capex ? fmt(row.capex) : '—'}</td>
-                      <td className="py-3 pl-4 text-right text-slate-700">{row.opex ? fmt(row.opex) : '—'}</td>
-                      <td className="py-3 pl-4 text-right font-semibold text-slate-900">{fmt(total)}</td>
-                    </tr>
-                  )
-                })}
-                <tr className="bg-slate-50">
-                  <td className="py-3 pr-4 font-semibold text-slate-900">TOTAL</td>
-                  <td className="py-3 pr-8 text-xs text-slate-500">Implementación completa + 24 meses SaaS</td>
-                  <td className="py-3 pl-4 text-right font-semibold text-slate-900">$128,160</td>
-                  <td className="py-3 pl-4 text-right font-semibold text-slate-900">$21,840</td>
-                  <td className="py-3 pl-4 text-right font-semibold text-slate-900">$150,000</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 05 · Cronograma ── */}
-      <section id="cronograma" className="bg-slate-50 py-28">
-        <div className="max-w-7xl mx-auto px-6">
-          <SectionHeader n="05" title="Cronograma del Proyecto" sub="Hitos clave · Junio – Octubre 2026 · 108 días" />
-
-          <div className="relative">
-            <div className="hidden md:block absolute left-8 right-8 h-px bg-slate-200 top-8 z-0" />
-            <div className="grid md:grid-cols-5 gap-5">
-              {TIMELINE.map(({ month, year, label, accent, items, highlight }) => (
-                <div key={month} className="relative z-10">
-                  <div className={`w-16 h-16 rounded-full ${accent} flex flex-col items-center justify-center mb-5 mx-auto md:mx-0 shadow-sm`}>
-                    <span className="text-white text-xs font-bold leading-tight">{month}</span>
-                    <span className="text-white/60 text-xs leading-tight">{year}</span>
-                  </div>
-                  <div className={`rounded-xl p-5 ${highlight ? 'bg-blue-600 text-white' : 'bg-white border border-slate-100'}`}>
-                    <div className={`text-sm font-semibold mb-3 ${highlight ? 'text-white' : 'text-slate-900'}`}>{label}</div>
-                    <ul className="space-y-1">
-                      {items.map((item) => (
-                        <li key={item} className={`text-xs ${highlight ? 'text-blue-100' : 'text-slate-500'}`}>
-                          · {item}
-                        </li>
-                      ))}
-                    </ul>
-                    {highlight && (
-                      <div className="mt-3 text-xs font-semibold text-blue-200 bg-blue-700 rounded px-2 py-1 text-center">
-                        Hito crítico
-                      </div>
-                    )}
-                  </div>
+              {m.items.map(it => (
+                <div key={it} style={{ fontSize: 11, color: C.muted, padding: '3px 0', display: 'flex', gap: 6, alignItems: 'center' }}>
+                  <span style={{ width: 4, height: 4, borderRadius: '50%', background: C.secondary, flexShrink: 0, display: 'block' }} />
+                  {it}
                 </div>
               ))}
             </div>
-          </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ background: C.primary, width: '34%', padding: '52px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+          <Cloud size={28} color={C.accent} />
+          <span style={{ color: C.white, fontSize: 20, fontWeight: 800 }}>Microsoft Azure</span>
+        </div>
+        <p style={{ color: C.accent, fontSize: 13, lineHeight: 1.7, marginBottom: 28 }}>
+          Seleccionado estratégicamente por su compatibilidad con el entorno institucional del SINART, presencia regional y respaldo normativo en Costa Rica.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {[
+            { icon: <CheckCircle size={14} color={C.accent} />, t: 'ISO 27001 certificado' },
+            { icon: <CheckCircle size={14} color={C.accent} />, t: 'SOC 2 Type II' },
+            { icon: <CheckCircle size={14} color={C.accent} />, t: 'Ley 8968 CR (datos personales)' },
+            { icon: <CheckCircle size={14} color={C.accent} />, t: '99.97% disponibilidad mensual' },
+            { icon: <CheckCircle size={14} color={C.accent} />, t: 'Soporte técnico 24/7/365' },
+          ].map(b => (
+            <div key={b.t} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', background: 'rgba(255,255,255,0.08)', borderRadius: 7 }}>
+              {b.icon}
+              <span style={{ color: C.white, fontSize: 12 }}>{b.t}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 24, padding: '12px 16px', background: 'rgba(255,255,255,0.1)', borderRadius: 8 }}>
+          <div style={{ color: C.accent, fontSize: 11, fontWeight: 700, marginBottom: 4 }}>ENFOQUE HÍBRIDO</div>
+          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, margin: 0, lineHeight: 1.5 }}>
+            Predictivo en gobernanza y SICOP · Adaptativo en parametrización y pruebas
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
 
-          <div className="mt-12 grid grid-cols-3 gap-5">
-            {[
-              { label: 'Inicio del Proyecto', value: '1 Jun 2026' },
-              { label: 'Go-Live modular', value: '2 Sep 2026' },
-              { label: 'Cierre contractual', value: '28 Oct 2026' },
-            ].map(({ label, value }) => (
-              <div key={label} className="bg-white border border-slate-100 rounded-xl p-5 text-center">
-                <div className="text-xs uppercase tracking-widest text-slate-400 mb-1">{label}</div>
-                <div className="text-lg font-semibold text-slate-900">{value}</div>
-              </div>
-            ))}
+function SlideInversion() {
+  return (
+    <div style={{ padding: '52px 64px', background: C.bgAlt, height: '100%', boxSizing: 'border-box' }}>
+      <Label>03 — Inversión requerida</Label>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28 }}>
+        <h2 style={{ color: C.primary, fontSize: 30, fontWeight: 800 }}>Estructura financiera del proyecto</h2>
+        <div style={{ background: C.primary, color: C.white, borderRadius: 8, padding: '8px 20px', fontSize: 13, fontWeight: 700 }}>Techo contractual: $150,000 USD</div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 22 }}>
+        <div style={{ background: C.primary, borderRadius: 12, padding: '24px 28px', color: C.white }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <DollarSign size={18} color={C.accent} />
+            <span style={{ color: C.accent, fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>INVERSIÓN TOTAL</span>
+          </div>
+          <div style={{ fontSize: 40, fontWeight: 900 }}>$150,000</div>
+          <div style={{ color: 'rgba(167,215,197,0.7)', fontSize: 12, marginTop: 4 }}>CAPEX + OPEX 24 meses</div>
+        </div>
+        <div style={{ background: C.white, borderRadius: 12, padding: '24px 28px', boxShadow: '0 1px 6px rgba(0,0,0,0.08)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <Zap size={16} color={C.warning} />
+            <span style={{ color: C.warning, fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>CAPEX</span>
+          </div>
+          <div style={{ fontSize: 34, fontWeight: 900, color: C.text }}>$128,160</div>
+          <div style={{ color: C.muted, fontSize: 12, marginTop: 4 }}>Implementación · 85.44% · 2,864h</div>
+        </div>
+        <div style={{ background: C.white, borderRadius: 12, padding: '24px 28px', boxShadow: '0 1px 6px rgba(0,0,0,0.08)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <Activity size={16} color={C.secondary} />
+            <span style={{ color: C.secondary, fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>OPEX</span>
+          </div>
+          <div style={{ fontSize: 34, fontWeight: 900, color: C.text }}>$21,840</div>
+          <div style={{ color: C.muted, fontSize: 12, marginTop: 4 }}>$910/mes × 24 meses · 14.56%</div>
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div style={{ background: C.white, borderRadius: 12, padding: 22, boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
+          <div style={{ fontWeight: 700, color: C.text, marginBottom: 16, fontSize: 13 }}>Desglose CAPEX por Fase WBS</div>
+          <HBar label="1.5 Gestión del Cambio y Capacitación" pct={50} color={C.primary}   note="$63,800 · 1,340h" />
+          <HBar label="1.3 Parametrización ERP"                pct={22} color={C.secondary} note="$28,320 · 672h" />
+          <HBar label="1.4 Migración y Pruebas"                pct={15} color={C.warning}   note="$18,760 · 436h" />
+          <HBar label="1.2 Infraestructura Azure"              pct={9}  color={C.accent}    note="$11,080 · 292h" />
+          <HBar label="1.1 Gestión y Gobernanza"               pct={5}  color={C.muted}     note="$6,200 · 124h" />
+        </div>
+        <div style={{ background: C.white, borderRadius: 12, padding: 22, boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
+          <div style={{ fontWeight: 700, color: C.text, marginBottom: 16, fontSize: 13 }}>Componentes OPEX mensual ($910/mes)</div>
+          <HBar label="Licencia SaaS ERP (módulos financieros)"      pct={50} color={C.primary}   note="$455/mes" />
+          <HBar label="Licencia SaaS RRHH (planillas y talento)"     pct={27} color={C.secondary} note="$250/mes" />
+          <HBar label="Infraestructura Azure (99.97% disponibilidad)" pct={15} color={C.warning}   note="$135/mes" />
+          <HBar label="Soporte Técnico 24/7 (SLA contractual)"        pct={8}  color={C.muted}     note="$70/mes" />
+          <div style={{ marginTop: 14, padding: '8px 14px', background: C.light, borderRadius: 6, fontSize: 12, color: C.primary, fontWeight: 600 }}>
+            OPEX inicia el 02/Sep/2026 · Vigencia 24 meses contractuales
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  )
+}
 
-      {/* ── 06 · Equipo ── */}
-      <section id="equipo" className="py-28">
-        <div className="max-w-7xl mx-auto px-6">
-          <SectionHeader n="06" title="Equipo del Proyecto" sub="5 consultores de gestión + 4 ejecutores técnicos · 2,864 horas totales" />
+function SlideCronograma() {
+  return (
+    <div style={{ padding: '52px 64px', background: C.bgAlt, height: '100%', boxSizing: 'border-box' }}>
+      <Label>04 — Cronograma</Label>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 26 }}>
+        <h2 style={{ color: C.primary, fontSize: 30, fontWeight: 800 }}>108 días calendarios · 1 Jun → 28 Oct 2026</h2>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ background: C.primary, color: C.white, borderRadius: 8, padding: '7px 16px', fontSize: 12, fontWeight: 700 }}>Go-Live: 2/Sep/2026</div>
+          <div style={{ background: C.success, color: C.white, borderRadius: 8, padding: '7px 16px', fontSize: 12, fontWeight: 700 }}>Cierre: 28/Oct/2026</div>
+        </div>
+      </div>
+      <div style={{ background: C.white, borderRadius: 12, padding: 22, boxShadow: '0 1px 6px rgba(0,0,0,0.07)', marginBottom: 18 }}>
+        <PhaseGantt phase="1.1 Gestión y Gobernanza"         pct={7}  offset={0}  color={C.muted}     cost="$6,200"    days="8d · 01–10 Jun" />
+        <PhaseGantt phase="1.2 Infraestructura Cloud Azure"  pct={20} offset={7}  color={C.secondary} cost="$11,080"   days="22d · 08 Jun–07 Jul" />
+        <PhaseGantt phase="1.3 Parametrización ERP y RRHH"  pct={31} offset={7}  color={C.primary}   cost="$28,320"   days="33d · 08 Jun–22 Jul" />
+        <PhaseGantt phase="1.4 Migración y Pruebas"          pct={34} offset={20} color={C.warning}   cost="$18,760"   days="37d · 22 Jun–11 Ago" />
+        <PhaseGantt phase="1.5 Cambio · Capacitación · Op."  pct={86} offset={20} color={C.accent}    cost="$63,800"   days="93d · 22 Jun–28 Oct" />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 10 }}>
+        {[
+          { id: 'H1', label: 'Acta constitutiva', date: '01/06', icon: <FileText size={14} color={C.secondary} />, done: true },
+          { id: 'H2', label: 'Azure aprovisionado', date: '16/06', icon: <Cloud size={14} color={C.primary} />, done: true },
+          { id: 'H3', label: 'Parametrización cerrada', date: '22/07', icon: <Settings size={14} color={C.warning} />, done: false },
+          { id: 'H4', label: 'Go-Live modular', date: '01/09', icon: <Zap size={14} color={C.success} />, done: false },
+          { id: 'H5', label: 'Cierre contractual', date: '28/10', icon: <Award size={14} color={C.muted} />, done: false },
+        ].map(h => (
+          <div key={h.id} style={{ background: C.white, borderRadius: 10, padding: '14px 12px', textAlign: 'center', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', borderBottom: `3px solid ${h.done ? C.primary : C.light}` }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>{h.icon}</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, marginBottom: 4 }}>{h.id}</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: C.text, marginBottom: 4 }}>{h.label}</div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: C.primary }}>{h.date}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
-          {/* Org hierarchy */}
-          <div className="flex flex-col items-center mb-14">
-            <div className="bg-slate-900 text-white rounded-xl px-6 py-3 text-center text-sm mb-4">
-              <div className="font-medium">Dirección Ejecutiva SINART S.A.</div>
-              <div className="text-slate-400 text-xs">Patrocinador</div>
-            </div>
-            <div className="w-px h-5 bg-slate-200" />
-            <div className="border-2 border-slate-300 rounded-xl px-6 py-3 text-center text-sm mb-4">
-              <div className="font-medium text-slate-700">Comité de Control de Cambios</div>
-              <div className="text-slate-400 text-xs">Álvarez · Castro · Salazar · Téllez</div>
-            </div>
-            <div className="w-px h-5 bg-slate-200" />
-            <div className="bg-blue-600 text-white rounded-xl px-8 py-3 text-center text-sm">
-              <div className="font-semibold">Josué Montero</div>
-              <div className="text-blue-200 text-xs">Director del Proyecto (PM)</div>
+function SlideEquipo() {
+  const members = [
+    { name: 'Josué Montero Villalobos', role: 'Director del Proyecto', resp: 'Integración · Comunicación · Control de cambios · Ruta crítica', icon: <Target size={22} color={C.primary} /> },
+    { name: 'Pablo Alvarado Umaña', role: 'Líder Infraestructura Cloud y Arquitectura', resp: 'Azure · Seguridad · Pruebas en sitio · Soporte post Go-Live', icon: <Cloud size={22} color={C.primary} /> },
+    { name: 'Erick Torres Hernández', role: 'Líder de Costos, Presupuesto y Adquisiciones', resp: 'CAPEX/OPEX · SICOP · Flujo de caja · Cláusulas contractuales', icon: <DollarSign size={22} color={C.primary} /> },
+    { name: 'Kristel Duarte Pérez', role: 'Líder Gestión del Cambio y Comunicación', resp: 'Capacitación · Índice de adopción · Talleres · Plan comunicación', icon: <Users size={22} color={C.primary} /> },
+    { name: 'Siandi Araya Bello', role: 'Asistente Técnica y Analista Funcional', resp: 'Requerimientos · Minutas · RTM · Registro de riesgos · QA', icon: <FileText size={22} color={C.primary} /> },
+  ]
+  return (
+    <div style={{ padding: '52px 64px', background: C.bgAlt, height: '100%', boxSizing: 'border-box' }}>
+      <Label>Equipo del proyecto</Label>
+      <h2 style={{ color: C.primary, fontSize: 30, fontWeight: 800, marginBottom: 8 }}>Equipo consultor ejecutor</h2>
+      <p style={{ color: C.muted, fontSize: 13, marginBottom: 26 }}>Universidad Nacional de Costa Rica · Escuela de Informática · EIF 500 · I Ciclo 2026</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {members.map(m => (
+          <div key={m.name} style={{ background: C.white, borderRadius: 10, padding: '16px 22px', boxShadow: '0 1px 6px rgba(0,0,0,0.07)', display: 'flex', gap: 16, alignItems: 'center' }}>
+            <div style={{ background: C.light, borderRadius: 10, padding: 12, flexShrink: 0 }}>{m.icon}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 800, color: C.text, fontSize: 14 }}>{m.name}</div>
+              <div style={{ color: C.primary, fontSize: 12, fontWeight: 600, margin: '2px 0' }}>{m.role}</div>
+              <div style={{ fontSize: 11, color: C.muted }}>{m.resp}</div>
             </div>
           </div>
+        ))}
+      </div>
+      <div style={{ marginTop: 16, padding: '10px 18px', background: C.light, borderRadius: 8, fontSize: 12, color: C.primary, fontWeight: 600, display: 'flex', gap: 32 }}>
+        <span>Equipo Técnico externo: Ing. Cloud · Consultor ERP · Esp. Seguridad · Ing. Datos</span>
+        <span>Total: 9 recursos · 2,864 horas</span>
+      </div>
+    </div>
+  )
+}
 
-          {/* Consultants */}
-          <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-5">
-            Equipo Consultor · $50/h
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            {CONSULTANTS.filter(c => c.name !== 'Josué Montero').map(({ name, role, hours, cost }) => (
-              <div
-                key={name}
-                className="border border-slate-100 rounded-xl p-5 hover:border-blue-200 hover:shadow-sm transition-all"
-              >
-                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-sm font-semibold mb-3">
-                  <Initials name={name} />
-                </div>
-                <div className="text-sm font-semibold text-slate-900 mb-0.5">{name}</div>
-                <div className="text-xs text-slate-400 leading-tight mb-4">{role}</div>
-                <div className="flex justify-between items-center pt-3 border-t border-slate-50 text-xs">
-                  <span className="text-slate-400">{hours}h</span>
-                  <span className="font-semibold text-slate-700">{fmt(cost)}</span>
-                </div>
-              </div>
-            ))}
+function SlideBeneficios() {
+  return (
+    <div style={{ padding: '52px 64px', background: C.bgAlt, height: '100%', boxSizing: 'border-box' }}>
+      <Label>05 — Beneficios esperados</Label>
+      <h2 style={{ color: C.primary, fontSize: 30, fontWeight: 800, marginBottom: 28 }}>Impacto operacional, financiero y normativo</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 20 }}>
+        <div style={{ background: C.white, borderRadius: 12, padding: 22, boxShadow: '0 1px 6px rgba(0,0,0,0.07)', borderTop: `4px solid ${C.primary}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <Settings size={18} color={C.primary} />
+            <span style={{ fontWeight: 700, color: C.primary, fontSize: 14 }}>Operacionales</span>
           </div>
+          {['Integración de finanzas, compras, inventario y RRHH en una sola plataforma', 'Automatización de planillas CCSS, INS y renta', 'Reportes de avance presupuestal en tiempo real', 'Eliminación de duplicidades y reprocesos manuales'].map(it => (
+            <div key={it} style={{ fontSize: 12, color: C.muted, padding: '4px 0', display: 'flex', gap: 8, alignItems: 'flex-start', lineHeight: 1.4 }}>
+              <CheckCircle size={12} color={C.primary} style={{ flexShrink: 0, marginTop: 2 }} />{it}
+            </div>
+          ))}
+        </div>
+        <div style={{ background: C.white, borderRadius: 12, padding: 22, boxShadow: '0 1px 6px rgba(0,0,0,0.07)', borderTop: `4px solid ${C.warning}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <TrendingUp size={18} color={C.warning} />
+            <span style={{ fontWeight: 700, color: C.warning, fontSize: 14 }}>Financieros</span>
+          </div>
+          {['Modelo OPEX $910/mes — sin inversión en servidores físicos', 'Control del techo presupuestario $150K vía SICOP', 'Visibilidad de costos operativos reales del SINART', 'Eliminación de multas por incumplimiento CCSS/Hacienda'].map(it => (
+            <div key={it} style={{ fontSize: 12, color: C.muted, padding: '4px 0', display: 'flex', gap: 8, alignItems: 'flex-start', lineHeight: 1.4 }}>
+              <CheckCircle size={12} color={C.warning} style={{ flexShrink: 0, marginTop: 2 }} />{it}
+            </div>
+          ))}
+        </div>
+        <div style={{ background: C.white, borderRadius: 12, padding: 22, boxShadow: '0 1px 6px rgba(0,0,0,0.07)', borderTop: `4px solid ${C.success}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <Shield size={18} color={C.success} />
+            <span style={{ fontWeight: 700, color: C.success, fontSize: 14 }}>Normativos</span>
+          </div>
+          {['Pistas de auditoría digitales para CGR y Contraloría', 'Cumplimiento Ley 8968 (protección datos personales)', 'Integración con CCSS, bancos, INS y Tributación', 'Módulo presupuestario alineado con normativa STAP'].map(it => (
+            <div key={it} style={{ fontSize: 12, color: C.muted, padding: '4px 0', display: 'flex', gap: 8, alignItems: 'flex-start', lineHeight: 1.4 }}>
+              <CheckCircle size={12} color={C.success} style={{ flexShrink: 0, marginTop: 2 }} />{it}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
+        <StatCard label="Adopción usuarios clave" value="90%" sub="Meta capacitación (Plan 1.5.3)" color={C.primary} />
+        <StatCard label="Índice de adopción sistema" value=">80%" sub="Encuestas post Go-Live (1.5.4)" color={C.secondary} />
+        <StatCard label="Tickets resueltos en SLA" value="95%" sub="Soporte post-implementación" color={C.success} />
+        <StatCard label="Disponibilidad Azure" value="99.97%" sub="SLA contractual mensual" color={C.warning} />
+      </div>
+    </div>
+  )
+}
 
-          {/* Technical */}
-          <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-5">
-            Equipo de Ejecución Técnica · $30/h
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {TECHNICAL.map(({ name, role, hours, cost }) => (
-              <div key={name} className="border border-dashed border-slate-200 rounded-xl p-5">
-                <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 text-xs font-semibold mb-3">
-                  <Initials name={name} />
-                </div>
-                <div className="text-sm font-medium text-slate-700 mb-0.5">{name}</div>
-                <div className="text-xs text-slate-400 leading-tight mb-4">{role}</div>
-                <div className="flex justify-between items-center pt-3 border-t border-slate-50 text-xs">
-                  <span className="text-slate-400">{hours}h</span>
-                  <span className="font-medium text-slate-600">{fmt(cost)}</span>
-                </div>
+function SlideRiesgos() {
+  const top = [
+    { id: 'R2.2', cat: 'Cronograma', desc: 'Incumplimiento del plazo final 28/Oct/2026', level: 'EXTREMO' as const, score: 48, resp: 'PM · C. Álvarez · A. Salazar' },
+    { id: 'R1.1', cat: 'Requerimientos', desc: 'Requerimientos funcionales incompletos o ambiguos', level: 'ALTO' as const, score: 32, resp: 'PM · Jefatura TIC' },
+    { id: 'R5.2', cat: 'RRHH', desc: 'Resistencia al cambio del personal del SINART', level: 'ALTO' as const, score: 32, resp: 'F. Castro · PM' },
+    { id: 'R6.2', cat: 'Tecnología', desc: 'Incumplimiento del SLA de disponibilidad 99.97%', level: 'ALTO' as const, score: 32, resp: 'J. Téllez · Proveedor ERP' },
+    { id: 'R6.3', cat: 'Tecnología', desc: 'Vulnerabilidades de seguridad o brechas de datos', level: 'ALTO' as const, score: 32, resp: 'A. Salazar · J. Téllez' },
+    { id: 'R10.1', cat: 'Legal', desc: 'Incumplimiento normativa CGR/STAP en módulo presupuesto', level: 'ALTO' as const, score: 32, resp: 'Jefatura Financiero · A. Salazar' },
+  ]
+  return (
+    <div style={{ padding: '52px 64px', background: C.bgAlt, height: '100%', boxSizing: 'border-box' }}>
+      <Label>06 — Riesgos clave</Label>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 22 }}>
+        <h2 style={{ color: C.primary, fontSize: 30, fontWeight: 800 }}>Gestión de riesgos — Top críticos</h2>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ padding: '5px 12px', borderRadius: 5, background: '#8B0000', color: '#fff', fontSize: 11, fontWeight: 700 }}>EXTREMO ≥48</div>
+          <div style={{ padding: '5px 12px', borderRadius: 5, background: C.danger, color: '#fff', fontSize: 11, fontWeight: 700 }}>ALTO 13–32</div>
+          <div style={{ padding: '5px 12px', borderRadius: 5, background: C.warning, color: '#fff', fontSize: 11, fontWeight: 700 }}>MODERADO 7–12</div>
+        </div>
+      </div>
+      <div style={{ background: C.white, borderRadius: 12, boxShadow: '0 1px 6px rgba(0,0,0,0.07)', overflow: 'hidden' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '60px 90px 1fr 80px 1fr', gap: 0, background: C.primary, padding: '10px 18px' }}>
+          {['ID', 'Categoría', 'Descripción del Riesgo', 'Nivel', 'Responsable'].map(h => (
+            <div key={h} style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1 }}>{h}</div>
+          ))}
+        </div>
+        {top.map((r, i) => (
+          <div key={r.id} style={{ display: 'grid', gridTemplateColumns: '60px 90px 1fr 80px 1fr', gap: 0, padding: '10px 18px', background: i % 2 === 0 ? C.white : C.bgAlt, borderBottom: `1px solid ${C.light}` }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.primary }}>{r.id}</div>
+            <div style={{ fontSize: 11, color: C.muted }}>{r.cat}</div>
+            <div style={{ fontSize: 12, color: C.text, paddingRight: 12 }}>{r.desc}</div>
+            <div><RiskBadge level={r.level} /></div>
+            <div style={{ fontSize: 11, color: C.muted }}>{r.resp}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginTop: 14, display: 'flex', gap: 16 }}>
+        <div style={{ flex: 1, padding: '10px 16px', background: C.white, borderRadius: 8, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Shield size={16} color={C.primary} />
+          <span style={{ fontSize: 12, color: C.text }}><strong>23 riesgos</strong> identificados · CCB: Josué Montero + Erick Torres + Jefaturas SINART</span>
+        </div>
+        <div style={{ flex: 1, padding: '10px 16px', background: C.white, borderRadius: 8, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Activity size={16} color={C.primary} />
+          <span style={{ fontSize: 12, color: C.text }}>Revisión <strong>semanal</strong> de la ruta crítica · Alertas en <strong>≤4 horas</strong> vía MS Teams + SICOP</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SlideFlujoCaja() {
+  const rows = [
+    { per: 'Jun 2026', act: 'Gobernanza + Azure + Parametrización (inicio)', cap: '$34,640', ope: '—', tot: '$34,640' },
+    { per: 'Jul 2026', act: 'Seguridad + PBAC + Pruebas unitarias + Manuales', cap: '$33,120', ope: '—', tot: '$33,120' },
+    { per: 'Ago 2026', act: 'Pruebas en sitio + Manuales (fin) + Capacitación', cap: '$12,800', ope: '—', tot: '$12,800' },
+    { per: 'Sep 2026', act: 'Go-Live 02/09 · Capacitación + Adopción + Soporte', cap: '$26,200', ope: '$910', tot: '$27,110' },
+    { per: 'Oct 2026', act: 'Soporte post-impl. + Cierre contractual 28/10', cap: '$21,400', ope: '$910', tot: '$22,310' },
+    { per: 'Nov 26 – May 28', act: 'Servicio SaaS activo (19 meses restantes)', cap: '—', ope: '$17,290', tot: '$17,290' },
+  ]
+  return (
+    <div style={{ padding: '52px 64px', background: C.bgAlt, height: '100%', boxSizing: 'border-box' }}>
+      <Label>Flujo de caja del proyecto</Label>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 22 }}>
+        <h2 style={{ color: C.primary, fontSize: 30, fontWeight: 800 }}>Distribución de desembolsos</h2>
+        <div style={{ display: 'flex', gap: 12, fontSize: 12 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, background: C.warning, borderRadius: 2, display: 'block' }} /> CAPEX</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, background: C.secondary, borderRadius: 2, display: 'block' }} /> OPEX</span>
+        </div>
+      </div>
+      <div style={{ background: C.white, borderRadius: 12, boxShadow: '0 1px 6px rgba(0,0,0,0.07)', overflow: 'hidden', marginBottom: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr 100px 80px 100px', background: C.primary, padding: '10px 18px', gap: 0 }}>
+          {['Período', 'Actividad Principal', 'CAPEX', 'OPEX', 'Total'].map(h => (
+            <div key={h} style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1 }}>{h}</div>
+          ))}
+        </div>
+        {rows.map((r, i) => (
+          <div key={r.per} style={{ display: 'grid', gridTemplateColumns: '120px 1fr 100px 80px 100px', padding: '10px 18px', background: i % 2 === 0 ? C.white : C.bgAlt, borderBottom: `1px solid ${C.light}`, gap: 0 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.primary }}>{r.per}</div>
+            <div style={{ fontSize: 12, color: C.muted, paddingRight: 12 }}>{r.act}</div>
+            <div style={{ fontSize: 12, color: C.warning, fontWeight: 600 }}>{r.cap}</div>
+            <div style={{ fontSize: 12, color: C.secondary, fontWeight: 600 }}>{r.ope}</div>
+            <div style={{ fontSize: 12, color: C.text, fontWeight: 700 }}>{r.tot}</div>
+          </div>
+        ))}
+        <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr 100px 80px 100px', padding: '12px 18px', background: C.primary, gap: 0 }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: C.accent }}>TOTAL</div>
+          <div style={{ fontSize: 12, color: C.accent }}>Implementación + 24 meses SaaS</div>
+          <div style={{ fontSize: 12, color: C.white, fontWeight: 700 }}>$128,160</div>
+          <div style={{ fontSize: 12, color: C.white, fontWeight: 700 }}>$21,840</div>
+          <div style={{ fontSize: 13, color: C.white, fontWeight: 900 }}>$150,000</div>
+        </div>
+      </div>
+      <div style={{ padding: '10px 18px', background: C.light, borderRadius: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <BarChart2 size={16} color={C.primary} />
+        <span style={{ fontSize: 12, color: C.primary, fontWeight: 600 }}>Mayor concentración de gasto: Jun–Jul 2026 ($67,760). A partir del Go-Live el flujo es constante y predecible: $910/mes.</span>
+      </div>
+    </div>
+  )
+}
+
+function SlideAprobacion() {
+  return (
+    <div style={{ display: 'flex', height: '100%' }}>
+      <div style={{ flex: 1, padding: '52px 44px', background: C.bgAlt, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <Label>Solicitud de aprobación</Label>
+        <h2 style={{ color: C.primary, fontSize: 30, fontWeight: 800, marginBottom: 16, lineHeight: 1.2 }}>
+          Requerimos la aprobación formal de la Junta Directiva del SINART
+        </h2>
+        <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.7, marginBottom: 28 }}>
+          El SINART tiene la oportunidad de modernizar su gestión institucional con una inversión prudente, bajo el marco legal de contratación pública de Costa Rica, con control total vía SICOP y un plazo de ejecución definido e inamovible.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+          {[
+            { icon: <DollarSign size={15} color={C.primary} />, label: 'Monto solicitado', value: '$150,000 USD · CAPEX $128,160 + OPEX $21,840', color: C.primary },
+            { icon: <Calendar size={15} color={C.secondary} />, label: 'Período de ejecución', value: '108 días · 1 Jun 2026 – 28 Oct 2026', color: C.secondary },
+            { icon: <Zap size={15} color={C.success} />, label: 'Go-Live comprometido', value: '2 de Setiembre de 2026', color: C.success },
+            { icon: <FileText size={15} color={C.warning} />, label: 'Control contractual', value: 'SICOP · plataforma oficial CR · auditable', color: C.warning },
+            { icon: <Users size={15} color={C.muted} />, label: 'Director del Proyecto', value: 'Josué Montero Villalobos', color: C.muted },
+          ].map(r => (
+            <div key={r.label} style={{ background: C.white, borderRadius: 9, padding: '12px 16px', boxShadow: '0 1px 5px rgba(0,0,0,0.07)', display: 'flex', alignItems: 'center', gap: 12 }}>
+              {r.icon}
+              <span style={{ fontSize: 13, color: C.muted, width: 180, flexShrink: 0 }}>{r.label}</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: r.color }}>{r.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ background: C.primary, width: '38%', padding: '52px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+          <CheckCircle size={24} color={C.accent} />
+          <span style={{ color: C.white, fontSize: 18, fontWeight: 800 }}>Aprobaciones requeridas</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {[
+            'Aprobación presupuestaria $150,000 USD',
+            'Autorización para inicio del proceso SICOP',
+            'Designación de Administradores de Contrato',
+            'Confirmación disponibilidad personal SINART',
+            'Inicio formal del proyecto: 01/06/2026',
+          ].map((item, i) => (
+            <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '10px 14px', background: 'rgba(255,255,255,0.1)', borderRadius: 8 }}>
+              <div style={{ width: 22, height: 22, borderRadius: '50%', border: `2px solid ${C.accent}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ color: C.accent, fontSize: 11, fontWeight: 800 }}>{i + 1}</span>
               </div>
-            ))}
+              <span style={{ color: C.white, fontSize: 13, lineHeight: 1.4 }}>{item}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 24, padding: '14px 16px', background: 'rgba(167,215,197,0.15)', borderRadius: 8, border: '1px solid rgba(167,215,197,0.3)' }}>
+          <div style={{ color: C.accent, fontSize: 12, lineHeight: 1.6 }}>
+            Con su aprobación hoy, el sistema ERP y RRHH del SINART estará operando en producción el <strong style={{ color: C.white }}>2 de Setiembre de 2026</strong>.
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  )
+}
 
-      {/* ── 07 · Comunicación ── */}
-      <section id="comunicacion" className="bg-slate-50 py-28">
-        <div className="max-w-7xl mx-auto px-6">
-          <SectionHeader n="07" title="Plan de Comunicación" sub="Estrategia híbrida contractual y operativa · 2 años de vigencia" />
-
-          <div className="grid md:grid-cols-2 gap-5 mb-12">
-            {[
-              {
-                title: 'Comunicación Contractual y de Gobernanza',
-                body: 'Flujos de información formales, escritos y auditables dirigidos a las jefaturas del SINART y administradores del contrato.',
-                items: ['Informes mensuales de rendimiento (CAPEX/OPEX)', 'Minutas de reunión de avance (semanal)', 'Notificaciones y entregables en SICOP', 'Cartas de aceptación de hitos con firma digital'],
-              },
-              {
-                title: 'Comunicación Operativa y de Adopción',
-                body: 'Canales dinámicos e interactivos orientados al equipo consultor ejecutor y a los usuarios finales del SINART.',
-                items: ['Sesiones diarias de sincronización (15 min · Teams)', 'Reportes de pruebas en sitio modulares', 'Convocatorias de capacitación (2 semanas antes)', 'Reporte quincenal de índice de adopción'],
-              },
-            ].map(({ title, body, items }) => (
-              <div key={title} className="bg-white border border-slate-100 rounded-xl p-8">
-                <h3 className="text-sm font-semibold text-slate-900 mb-3">{title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed mb-5">{body}</p>
-                <ul className="space-y-2">
-                  {items.map((i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                      <span className="mt-1.5 w-1 h-1 rounded-full bg-slate-400 flex-shrink-0" />
-                      {i}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+function SlideQA() {
+  return (
+    <div style={{ background: C.primary, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: 64 }}>
+      <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(167,215,197,0.15)', border: `2px solid ${C.accent}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+        <Users size={30} color={C.accent} />
+      </div>
+      <h2 style={{ color: C.white, fontSize: 44, fontWeight: 900, marginBottom: 12 }}>Preguntas</h2>
+      <p style={{ color: C.accent, fontSize: 18, marginBottom: 48, maxWidth: 480, lineHeight: 1.5 }}>
+        El equipo consultor está a disposición de la Junta Directiva para responder cualquier consulta técnica, financiera o normativa.
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, maxWidth: 720 }}>
+        {[
+          { icon: <Cloud size={16} color={C.accent} />, q: '¿Por qué Microsoft Azure?', a: 'Compatibilidad institucional, presencia regional CR, SLA 99.97% y certificaciones ISO 27001 / SOC 2.' },
+          { icon: <DollarSign size={16} color={C.accent} />, q: '¿Cómo se controla el gasto?', a: 'Control 100% via SICOP. Línea base CAPEX/OPEX auditada mensualmente por Jefatura Financiera.' },
+          { icon: <Shield size={16} color={C.accent} />, q: '¿Qué pasa si el proveedor falla?', a: 'Cláusula de escrow de datos, garantía de cumplimiento y proceso de rescisión con contingencia activa.' },
+        ].map(item => (
+          <div key={item.q} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(167,215,197,0.2)', borderRadius: 10, padding: '18px 20px', textAlign: 'left' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>{item.icon}</div>
+            <div style={{ color: C.white, fontWeight: 700, fontSize: 13, marginBottom: 6 }}>{item.q}</div>
+            <div style={{ color: 'rgba(167,215,197,0.8)', fontSize: 12, lineHeight: 1.5 }}>{item.a}</div>
           </div>
+        ))}
+      </div>
+      <div style={{ marginTop: 48, color: 'rgba(255,255,255,0.35)', fontSize: 12 }}>
+        EIF 500 · Administración de Proyectos · Universidad Nacional de Costa Rica · I Ciclo 2026
+      </div>
+    </div>
+  )
+}
 
-          {/* Tools */}
-          <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-5">
-            Herramientas Oficiales
-          </h3>
-          <div className="grid md:grid-cols-3 gap-4 mb-12">
-            {[
-              { tool: 'Microsoft Teams', use: 'Sincronización diaria, reuniones virtuales de seguimiento con jefaturas SINART y comités extraordinarios de control de cambios.' },
-              { tool: 'Microsoft OneDrive', use: 'Repositorio centralizado en Azure para minutas, planos técnicos, manuales de usuario y cartas de aceptación de hitos.' },
-              { tool: 'SICOP', use: 'Canal legal y obligatorio regulado por la legislación costarricense para oficialización de entregables, cambios contractuales y facturación.' },
-            ].map(({ tool, use }) => (
-              <div key={tool} className="bg-white border border-slate-100 rounded-xl p-6">
-                <div className="text-sm font-semibold text-slate-900 mb-2">{tool}</div>
-                <div className="text-xs text-slate-500 leading-relaxed">{use}</div>
-              </div>
-            ))}
-          </div>
+// ─── Slide Registry ───────────────────────────────────────────────────────────
 
-          {/* Escalation */}
-          <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-5">
-            Protocolo de Escalamiento — 3 Niveles
-          </h3>
-          <div className="space-y-3">
-            {[
-              {
-                n: '1',
-                level: 'Nivel Operativo',
-                desc: 'Desviaciones técnicas menores en parametrización ERP o contratiempos en Azure. Resolución directa entre Pablo Alvarado y la contraparte técnica del SINART (Jimmy Téllez / Francisco Castro).',
-                trigger: 'Inmediato',
-              },
-              {
-                n: '2',
-                level: 'Nivel de Gestión',
-                desc: 'Si el problema persiste más de 48 horas sin resolución o requiere ajuste al cronograma, se traslada al Director del Proyecto para negociación con jefes de departamento SINART.',
-                trigger: '> 48h sin resolución',
-              },
-              {
-                n: '3',
-                level: 'Nivel Directivo',
-                desc: 'Si el conflicto compromete el alcance original, el techo de $150,000 USD o la fecha del 28/10/2026, el PM convoca formalmente al Comité de Control de Cambios e informa a la Dirección Ejecutiva.',
-                trigger: 'Impacto en triple restricción',
-              },
-            ].map(({ n, level, desc, trigger }) => (
-              <div key={n} className="bg-white border border-slate-100 rounded-xl p-6 flex gap-5">
-                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 flex-shrink-0">
-                  {n}
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-semibold text-slate-900 mb-1">{level}</div>
-                  <div className="text-sm text-slate-500 leading-relaxed">{desc}</div>
-                </div>
-                <div className="flex-shrink-0">
-                  <span className="text-xs text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1 rounded-full whitespace-nowrap">
-                    {trigger}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+const SLIDES = [
+  { id: 'portada',      label: 'Portada',       component: SlidePortada },
+  { id: 'agenda',       label: 'Agenda',        component: SlideAgenda },
+  { id: 'justif',       label: 'Justificación', component: SlideJustificacion },
+  { id: 'solucion',     label: 'Solución',      component: SlideSolucion },
+  { id: 'inversion',    label: 'Inversión',     component: SlideInversion },
+  { id: 'cronograma',   label: 'Cronograma',    component: SlideCronograma },
+  { id: 'equipo',       label: 'Equipo',        component: SlideEquipo },
+  { id: 'beneficios',   label: 'Beneficios',    component: SlideBeneficios },
+  { id: 'riesgos',      label: 'Riesgos',       component: SlideRiesgos },
+  { id: 'flujo',        label: 'Flujo Caja',    component: SlideFlujoCaja },
+  { id: 'aprobacion',   label: 'Aprobación',    component: SlideAprobacion },
+  { id: 'qa',           label: 'Q&A',           component: SlideQA },
+]
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
+
+export default function Home() {
+  const [idx, setIdx] = useState(0)
+  const [dir, setDir] = useState<'fwd' | 'bck'>('fwd')
+  const touchX = useRef<number | null>(null)
+
+  const go = useCallback((next: number) => {
+    if (next < 0 || next >= SLIDES.length) return
+    setDir(next > idx ? 'fwd' : 'bck')
+    setIdx(next)
+  }, [idx])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(idx + 1) }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(idx - 1) }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [idx, go])
+
+  const onTouchStart = (e: React.TouchEvent) => { touchX.current = e.touches[0].clientX }
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX.current === null) return
+    const dx = touchX.current - e.changedTouches[0].clientX
+    if (Math.abs(dx) > 50) go(idx + (dx > 0 ? 1 : -1))
+    touchX.current = null
+  }
+
+  const Slide = SLIDES[idx].component
+  const pct = ((idx + 1) / SLIDES.length) * 100
+
+  return (
+    <div
+      style={{ position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column', background: C.text }}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
+      <div
+        key={`${idx}-${dir}`}
+        className={`slide-${dir}`}
+        style={{ flex: 1, overflow: 'hidden' }}
+        onClick={() => go(idx + 1)}
+      >
+        <Slide />
+      </div>
+
+      {/* Nav bar */}
+      <div style={{ background: '#111820', padding: '0 20px', height: 46, display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0, position: 'relative' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.08)' }}>
+          <div style={{ height: 2, background: C.accent, width: `${pct}%`, transition: 'width 0.3s ease' }} />
         </div>
-      </section>
 
-      {/* ── Footer ── */}
-      <footer className="border-t border-slate-100 py-12">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between gap-6 mb-8">
-            <div>
-              <div className="text-sm font-semibold text-slate-900 mb-1">
-                ERP &amp; RRHH en la Nube · SINART S.A.
-              </div>
-              <div className="text-xs text-slate-400">
-                EIF 500: Administración de Proyectos · Universidad Nacional de Costa Rica · I Ciclo 2026
-              </div>
-              <div className="text-xs text-slate-400 mt-0.5">
-                MSc. Walter Díaz Argueta
-              </div>
-            </div>
-            <div className="text-xs text-slate-400 space-y-0.5 md:text-right">
-              <div>Presupuesto total: $150,000 USD</div>
-              <div>108 días de implementación · 24 meses SaaS</div>
-              <div>Go-Live: 2 Sep 2026 · Cierre: 28 Oct 2026</div>
-            </div>
-          </div>
-          <div className="border-t border-slate-50 pt-6 flex flex-wrap gap-x-8 gap-y-1 text-xs text-slate-400">
-            <span>Pablo Alvarado Umaña</span>
-            <span>Kristel Duarte Perez</span>
-            <span>Erick Torres Hernández</span>
-            <span>Siandi Araya Bello</span>
-            <span>Josue Montero Villalobos</span>
-          </div>
+        <button onClick={e => { e.stopPropagation(); go(idx - 1) }} disabled={idx === 0}
+          style={{ background: 'none', border: 'none', cursor: idx === 0 ? 'default' : 'pointer', color: idx === 0 ? 'rgba(255,255,255,0.2)' : C.accent, padding: 4, display: 'flex' }}>
+          <ChevronLeft size={18} />
+        </button>
+
+        <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center', overflow: 'hidden' }}>
+          {SLIDES.map((s, i) => (
+            <button key={s.id} onClick={e => { e.stopPropagation(); go(i) }} title={s.label}
+              style={{ background: i === idx ? C.accent : 'rgba(255,255,255,0.2)', border: 'none', borderRadius: 3, cursor: 'pointer', width: i === idx ? 20 : 7, height: 7, transition: 'all 0.22s ease', padding: 0, flexShrink: 0 }} />
+          ))}
         </div>
-      </footer>
 
+        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
+          {SLIDES[idx].label} · {idx + 1}/{SLIDES.length}
+        </span>
+
+        <button onClick={e => { e.stopPropagation(); go(idx + 1) }} disabled={idx === SLIDES.length - 1}
+          style={{ background: 'none', border: 'none', cursor: idx === SLIDES.length - 1 ? 'default' : 'pointer', color: idx === SLIDES.length - 1 ? 'rgba(255,255,255,0.2)' : C.accent, padding: 4, display: 'flex' }}>
+          <ChevronRight size={18} />
+        </button>
+      </div>
     </div>
   )
 }
