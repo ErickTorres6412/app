@@ -31,29 +31,23 @@ export function SlideProblema() {
   ]
 
   return (
-    <div style={{ padding: '40px 64px', background: C.bgAlt, height: '100%', boxSizing: 'border-box' }}>
-      <Label>Justificación del Proyecto</Label>
-      
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
-        <div style={{ flex: 1 }}>
-          <h2 style={{ color: C.primary, fontSize: 28, fontWeight: 800, margin: '0 0 6px 0', lineHeight: 1.2 }}>
-            Diagnóstico Situacional del SINART S.A.
-          </h2>
-          <p style={{ fontSize: 14, color: C.muted, margin: 0 }}>
-            Análisis de las deficiencias administrativas y operativas que comprometen la gobernanza institucional.
-          </p>
-        </div>
+    <div style={{ padding: '52px 64px', background: C.bgAlt, height: '100%', boxSizing: 'border-box' }}>
+      <Label>Problema</Label>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28 }}>
+        <h2 style={{ color: C.primary, fontSize: 30, fontWeight: 800 }}>
+          El SINART opera sin sistemas de gestión integrados
+        </h2>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
         {items.map(item => (
-          <div 
-            key={item.title} 
-            style={{ 
-              background: C.white, 
-              borderRadius: 12, 
-              padding: '20px 24px', 
-              boxShadow: '0 2px 8px rgba(0,0,0,0.05)', 
+          <div
+            key={item.title}
+            style={{
+              background: C.white,
+              borderRadius: 12,
+              padding: '20px 24px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
               borderTop: `4px solid ${item.borderColor}`,
               display: 'flex',
               flexDirection: 'column',
