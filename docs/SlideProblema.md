@@ -5,7 +5,7 @@
 ---
 
 ## [Minuto 0:00 - 0:45] Introducción y Contexto Organizacional
-"Buenos días profesores y compañeros. Para iniciar con la presentación de nuestro informe ejecutivo para el proyecto del SINART S.A., me corresponde abrir el bloque de Justificación del Proyecto, enfocándome específicamente en el Diagnóstico Situacional y la raíz del problema que motivó la apertura de esta iniciativa bajo las mejores prácticas del PMBOK.
+"Buenos días Junta Directiva. Para iniciar con la presentación de nuestro informe ejecutivo para el proyecto del SINART S.A., me corresponde abrir el bloque de Justificación del Proyecto, enfocándome específicamente en el Diagnóstico Situacional y la raíz del problema que motivó la apertura de esta iniciativa bajo las mejores prácticas del PMBOK.
 
 Como introducción al escenario actual, el Sistema Nacional de Radio y Televisión, como empresa pública, enfrenta retos mayúsculos de gobernanza y control de fondos públicos. A través del análisis técnico realizado por nuestro equipo, identificamos que el núcleo del problema radica en que **el SINART opera actualmente sin un sistema de gestión integrado**. Esta ausencia tecnológica no es meramente un atraso de herramientas, sino una deficiencia estructural que afecta de forma directa la transparencia, la agilidad institucional y el cumplimiento de las normativas de la República."
 
