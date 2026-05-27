@@ -25,7 +25,7 @@ export function SlideProblema() {
     {
       icon: <BarChart2 size={22} color={C.warning} />,
       borderColor: C.warning,
-      title: 'Incapacidad de Toma de Decisiones y Ceguera de Costos',
+      title: 'Incapacidad de Toma de Decisiones y Ausencia de control financiero',
       desc: 'La dirección ejecutiva carece de visibilidad sobre los costos operativos reales y la ejecución presupuestaria en tiempo real. Generar reportes financieros toma semanas, anulando la capacidad de respuesta estratégica ante cambios del entorno.',
     },
   ]

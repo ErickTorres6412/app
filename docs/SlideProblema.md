@@ -18,7 +18,7 @@ Esto nos lleva de forma inmediata al segundo elemento crítico: la **Ausencia to
 
 ---
 
-## [Minuto 2:00 - 3:15] Bloque 2: Riesgo Normativo y Ceguera de Decisiones (Siguientes cuadrantes y cierre)
+## [Minuto 2:00 - 3:15] Bloque 2: Riesgo Normativo y  de Ausencia de control financiero (Siguientes cuadrantes y cierre)
 "El tercer punto del diagnóstico, y quizás uno de los más alarmantes, es el **Riesgo normativo permanente**. Al procesar planillas, marcas de asistencia y la ejecución del presupuesto mediante sistemas desarticulados, la institución queda expuesta a inconsistencias involuntarias. Esto genera una vulnerabilidad crítica ante entidades fiscalizadoras clave del país, tales como la Caja Costarricense de Seguro Social, el Ministerio de Trabajo y la misma CGR. Cualquier desfase en estos reportes se traduce directamente en sanciones económicas severas, multas institucionales y daños graves a la reputación pública de la organización.
 
 Finalmente, esta desconexión genera una **Visibilidad nula para la toma de decisiones estratégicas**. Para la Alta Dirección y las Jefaturas del SINART, es prácticamente imposible conocer en tiempo real la ejecución del presupuesto o el costo operativo real de las distintas dependencias. Compilar estados financieros e informes de rendimiento requiere semanas de recolección manual de datos, lo que anula por completo la capacidad de respuesta oportuna de la gerencia ante cambios imprevistos en su entorno o presupuestos. "
