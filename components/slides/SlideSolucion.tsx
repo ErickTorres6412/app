@@ -75,7 +75,7 @@ export function SlideSolucion() {
           display: 'grid', 
           gridTemplateColumns: 'repeat(2, 1fr)',
           gridTemplateRows: 'repeat(2, 1fr)',
-          gap: 'clamp(20px, 1vh, 30px) clamp(20px, 2vw, 30px)',
+          gap: 'clamp(50px, 1vh, 30px) clamp(50px, 2vw, 30px)',
           flex: 1,
           minHeight: 0,
         }}>
@@ -88,7 +88,7 @@ export function SlideSolucion() {
               borderTop: `4px solid ${pilar.color}`, 
               display: 'flex', 
               flexDirection: 'column', 
-              gap: 'clamp(8px, 1.2vh, 16px)',
+              gap: 'clamp(40px, 1.2vh, 16px)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(8px, 1vw, 14px)' }}>
                 <div style={{ background: `${pilar.color}12`, padding: 'clamp(6px, 0.8vw, 10px)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
