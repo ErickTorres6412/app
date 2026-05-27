@@ -22,7 +22,7 @@ export function SlideBeneficios() {
           {
             icon: <TrendingUp size={20} color={C.warning} />, title: 'Financieros', color: C.warning,
             items: [
-              'OPEX $910/mes — sin inversión en infraestructura física',
+              'OPEX $598/mes — sin inversión en infraestructura física',
               'Control del techo $150K vía SICOP con trazabilidad completa',
               'Visibilidad de costos operativos reales del SINART',
               'Eliminación de multas por incumplimiento CCSS/Hacienda',
