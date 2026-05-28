@@ -3,24 +3,24 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { C } from '../components/slides/constants'
-import { SlidePortada }   from '../components/slides/SlidePortada'
-import { SlideProblema }  from '../components/slides/SlideProblema'
-import { SlideSolucion }  from '../components/slides/SlideSolucion'
+import { SlidePortada } from '../components/slides/SlidePortada'
+import { SlideProblema } from '../components/slides/SlideProblema'
+import { SlideSolucion } from '../components/slides/SlideSolucion'
 import { SlideInversion } from '../components/slides/SlideInversion'
 import { SlideCronograma } from '../components/slides/SlideCronograma'
 import { SlideBeneficios } from '../components/slides/SlideBeneficios'
-import { SlideRiesgos }   from '../components/slides/SlideRiesgos'
-import { SlideQA }        from '../components/slides/SlideQA'
+import { SlideRiesgos } from '../components/slides/SlideRiesgos'
+import { SlideQA } from '../components/slides/SlideQA'
 
 const SLIDES = [
-  { id: 'portada',     label: 'Portada',     component: SlidePortada },
-  { id: 'problema',    label: 'Problema',    component: SlideProblema },
-  { id: 'solucion',    label: 'Solución',    component: SlideSolucion },
-  { id: 'inversion',   label: 'Inversión',   component: SlideInversion },
-  { id: 'cronograma',  label: 'Cronograma',  component: SlideCronograma },
-  { id: 'beneficios',  label: 'Beneficios',  component: SlideBeneficios },
-  { id: 'riesgos',     label: 'Riesgos',     component: SlideRiesgos },
-  { id: 'qa',          label: 'Cierre',      component: SlideQA },
+  { id: 'portada', label: 'Portada', component: SlidePortada },
+  { id: 'problema', label: 'Problema', component: SlideProblema },
+  { id: 'solucion', label: 'Solución', component: SlideSolucion },
+  { id: 'inversion', label: 'Inversión', component: SlideInversion },
+  { id: 'cronograma', label: 'Cronograma', component: SlideCronograma },
+  { id: 'beneficios', label: 'Beneficios', component: SlideBeneficios },
+  { id: 'riesgos', label: 'Riesgos', component: SlideRiesgos },
+  { id: 'qa', label: 'Cierre', component: SlideQA },
 ]
 
 export default function Home() {
