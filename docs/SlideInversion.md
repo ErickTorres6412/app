@@ -16,7 +16,8 @@ El techo contractual establecido es de ciento cincuenta mil dólares. Esa cifra 
 
 "El ochenta y cinco por ciento de esa línea base — $128,160 — corresponde al CAPEX, es decir, al costo de implementar el sistema. Este monto representa 2,864 horas de trabajo técnico especializado distribuidas en cinco fases.
 
-La fase más significativa, con el cincuenta por ciento del CAPEX, es la Gestión del Cambio y Capacitación: $63,800. Esto no es un lujo — es la lección más documentada en implementaciones ERP fallidas a nivel mundial. Un sistema puede estar perfectamente configurado y fracasar si el personal no lo adopta. Estamos invirtiendo conscientemente en que el SINART realmente use lo que estamos entregando.
+La fase más significativa, con el cincuenta por ciento del CAPEX, es la Gestión del Cambio y Capacitación: $63,800. Esto no es un lujo — Gartner documenta que entre el 55% y el 75% de las implementaciones ERP fracasan, y Deloitte identifica la gestión del cambio como el mayor punto de falla, por encima de los problemas técnicos. Un sistema puede estar perfectamente configurado y fracasar si el personal no lo adopta. Estamos invirtiendo conscientemente en que el SINART realmente use lo que estamos entregando.
+
 
 Le siguen la parametrización de los módulos ERP a $28,320, la migración de datos históricos y pruebas a $18,760, la infraestructura cloud Azure a $11,080, y la gobernanza del proyecto a $6,200. Esta distribución concentra el mayor peso donde el riesgo humano es más alto."
 

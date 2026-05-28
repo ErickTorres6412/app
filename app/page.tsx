@@ -7,6 +7,7 @@ import { SlidePortada }   from '../components/slides/SlidePortada'
 import { SlideProblema }  from '../components/slides/SlideProblema'
 import { SlideSolucion }  from '../components/slides/SlideSolucion'
 import { SlideInversion } from '../components/slides/SlideInversion'
+import { SlideCronograma } from '../components/slides/SlideCronograma'
 import { SlideBeneficios } from '../components/slides/SlideBeneficios'
 import { SlideRiesgos }   from '../components/slides/SlideRiesgos'
 import { SlideQA }        from '../components/slides/SlideQA'
@@ -16,6 +17,7 @@ const SLIDES = [
   { id: 'problema',    label: 'Problema',    component: SlideProblema },
   { id: 'solucion',    label: 'Solución',    component: SlideSolucion },
   { id: 'inversion',   label: 'Inversión',   component: SlideInversion },
+  { id: 'cronograma',  label: 'Cronograma',  component: SlideCronograma },
   { id: 'beneficios',  label: 'Beneficios',  component: SlideBeneficios },
   { id: 'riesgos',     label: 'Riesgos',     component: SlideRiesgos },
   { id: 'qa',          label: 'Cierre',      component: SlideQA },
