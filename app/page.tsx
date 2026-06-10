@@ -7,20 +7,20 @@ import { SlidePortada } from '../components/slides/SlidePortada'
 import { SlideProblema } from '../components/slides/SlideProblema'
 import { SlideSolucion } from '../components/slides/SlideSolucion'
 import { SlideInversion } from '../components/slides/SlideInversion'
-import { SlideCronograma } from '../components/slides/SlideCronograma'
 import { SlideBeneficios } from '../components/slides/SlideBeneficios'
+import { SlideCronograma } from '../components/slides/SlideCronograma'
 import { SlideRiesgos } from '../components/slides/SlideRiesgos'
 import { SlideQA } from '../components/slides/SlideQA'
 
 const SLIDES = [
-  { id: 'portada', label: 'Portada', component: SlidePortada },
-  { id: 'problema', label: 'Problema', component: SlideProblema },
-  { id: 'solucion', label: 'Solución', component: SlideSolucion },
-  { id: 'inversion', label: 'Inversión', component: SlideInversion },
-  { id: 'cronograma', label: 'Cronograma', component: SlideCronograma },
-  { id: 'beneficios', label: 'Beneficios', component: SlideBeneficios },
-  { id: 'riesgos', label: 'Riesgos', component: SlideRiesgos },
-  { id: 'qa', label: 'Cierre', component: SlideQA },
+  { id: 'portada',    label: 'Portada',           component: SlidePortada },
+  { id: 'contexto',   label: 'Contexto',           component: SlideProblema },
+  { id: 'problema',   label: 'Problema',           component: SlideSolucion },
+  { id: 'objetivos',  label: 'Objetivos',          component: SlideInversion },
+  { id: 'marco',      label: 'Marco y Metodología', component: SlideBeneficios },
+  { id: 'solucion',   label: 'Propuesta COINKI',   component: SlideCronograma },
+  { id: 'resultados', label: 'Resultados',         component: SlideRiesgos },
+  { id: 'cierre',     label: 'Cierre / Q&A',       component: SlideQA },
 ]
 
 export default function Home() {
@@ -69,7 +69,7 @@ export default function Home() {
         <Slide />
       </div>
 
-      <div style={{ background: '#111820', padding: '0 20px', height: 44, display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0, position: 'relative' }}>
+      <div style={{ background: '#1a0a0a', padding: '0 20px', height: 44, display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0, position: 'relative' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.08)' }}>
           <div style={{ height: 2, background: C.accent, width: `${pct}%`, transition: 'width 0.3s ease' }} />
         </div>

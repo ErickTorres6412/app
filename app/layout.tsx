@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ERP & RRHH en la Nube — SINART | EIF 500",
-  description: "Presentación ejecutiva: Implementación y Alquiler de Software ERP y RRHH en la Nube para el SINART. Universidad Nacional de Costa Rica, I Ciclo 2026.",
+  title: "COINKI: Red de alojamiento y comunidad universitaria | EIF501 UNA",
+  description: "Presentación de Anteproyecto: COINKI — Plataforma web de alojamiento compartido y comunidad universitaria. Universidad Nacional de Costa Rica, EIF501, I Ciclo 2026.",
 };
 
 export default function RootLayout({

@@ -25,7 +25,7 @@ export function HBar({ label, pct, color, note }: { label: string; pct: number; 
 export function RiskRow({ id, desc, level, score, mitigation }: {
   id: string; desc: string; level: 'EXTREMO' | 'ALTO'; score: number; mitigation: string
 }) {
-  const color = level === 'EXTREMO' ? '#8B0000' : C.danger
+  const color = level === 'EXTREMO' ? '#4A0000' : C.danger
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '52px 1fr 90px 1fr', gap: 0, padding: '10px 18px', borderBottom: `1px solid ${C.light}`, alignItems: 'start' }}>
       <span style={{ fontSize: 12, fontWeight: 700, color: C.primary }}>{id}</span>

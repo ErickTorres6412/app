@@ -1,71 +1,83 @@
-import { Activity, CheckCircle, Shield, TrendingUp } from 'lucide-react'
+import { Brain, Layers, Search, FlaskConical } from 'lucide-react'
 import { C } from './constants'
 import { Label } from './shared'
 
 export function SlideBeneficios() {
-  return (
-    <div style={{ padding: '52px 64px', background: C.bgAlt, height: '100%', boxSizing: 'border-box' }}>
-      <Label>Beneficios esperados</Label>
-      <h2 style={{ color: C.primary, fontSize: 30, fontWeight: 800, marginBottom: 28 }}>Impacto operacional, financiero y normativo</h2>
+  const conceptos = [
+    {
+      icon: <Brain size={20} color={C.primary} />,
+      titulo: 'Compatibilidad de convivencia',
+      desc: 'Fenómeno multidimensional (sueño, ruido, limpieza, socialización), apoyado en el modelo de personalidad OCEAN para la predicción de compatibilidad.',
+    },
+    {
+      icon: <Search size={20} color={C.secondary} />,
+      titulo: 'Sistemas de recomendación',
+      desc: 'Filtrado basado en contenido, filtrado colaborativo y modelos híbridos, adaptados al contexto de emparejamiento de compañeros de convivencia.',
+    },
+    {
+      icon: <Layers size={20} color={C.warning} />,
+      titulo: 'Algoritmo híbrido de dos capas',
+      desc: 'Una capa de contenido (variables del perfil) y una colaborativa (comportamiento en la plataforma), mitigando el problema del inicio en frío.',
+    },
+    {
+      icon: <FlaskConical size={20} color={C.success} />,
+      titulo: 'Arquitectura desacoplada y verificación',
+      desc: 'Cliente y servidor vía API REST, con validación de carné estudiantil y dominio de correo institucional de la universidad.',
+    },
+  ]
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 18, marginBottom: 22 }}>
-        {[
-          {
-            icon: <Activity size={20} color={C.primary} />, title: 'Operacionales', color: C.primary,
-            items: [
-              'Integración de finanzas, compras, inventario y RRHH en una sola plataforma',
-              'Automatización de planillas CCSS, INS y renta',
-              'Reportes presupuestales en tiempo real',
-              'Eliminación de duplicidades y reprocesos manuales',
-            ],
-          },
-          {
-            icon: <TrendingUp size={20} color={C.warning} />, title: 'Financieros', color: C.warning,
-            items: [
-              'OPEX $598/mes — sin inversión en infraestructura física',
-              'Control del techo $150K vía SICOP con trazabilidad completa',
-              'Visibilidad de costos operativos reales del SINART',
-              'Eliminación de multas por incumplimiento CCSS/Hacienda',
-            ],
-          },
-          {
-            icon: <Shield size={20} color={C.success} />, title: 'Normativos', color: C.success,
-            items: [
-              'Pistas de auditoría digitales para CGR y Contraloría',
-              'Cumplimiento Ley 8968 (protección de datos personales)',
-              'Integración con CCSS, INS, Hacienda y bancos',
-              'Módulo presupuestario alineado con normativa STAP',
-            ],
-          },
-        ].map(cat => (
-          <div key={cat.title} style={{ background: C.white, borderRadius: 12, padding: 22, boxShadow: '0 1px 6px rgba(0,0,0,0.07)', borderTop: `4px solid ${cat.color}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              {cat.icon}
-              <span style={{ fontWeight: 700, color: cat.color, fontSize: 15 }}>{cat.title}</span>
+  const metodologia = [
+    { label: 'Tipo', value: 'Aplicada · Mixta (cuantitativa + cualitativa)' },
+    { label: 'Recolección', value: 'Revisión bibliográfica, entrevistas semiestructuradas, grupos de discusión' },
+    { label: 'Herramientas', value: 'Métricas: precisión, exhaustividad, puntuación F1 + encuestas de satisfacción' },
+    { label: 'Gestión', value: 'Metodología ágil Scrum en ciclos iterativos con perfiles sintéticos' },
+  ]
+
+  return (
+    <div style={{ padding: '44px 60px', background: C.bgAlt, height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div>
+        <Label>Marco Conceptual y Metodología</Label>
+        <h2 style={{ color: C.primary, fontSize: 26, fontWeight: 800, margin: 0 }}>
+          Bases teóricas y enfoque de investigación
+        </h2>
+      </div>
+
+      {/* Marco conceptual */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        {conceptos.map(c => (
+          <div key={c.titulo} style={{ background: C.white, borderRadius: 10, padding: '14px 18px', boxShadow: '0 1px 6px rgba(0,0,0,0.04)', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+            <div style={{ background: C.light, borderRadius: 8, padding: 8, flexShrink: 0, display: 'flex' }}>{c.icon}</div>
+            <div>
+              <div style={{ fontWeight: 700, color: C.text, fontSize: 13, marginBottom: 4 }}>{c.titulo}</div>
+              <p style={{ color: C.muted, fontSize: 12, lineHeight: 1.55, margin: 0 }}>{c.desc}</p>
             </div>
-            {cat.items.map(it => (
-              <div key={it} style={{ fontSize: 12, color: C.muted, padding: '5px 0', display: 'flex', gap: 8, alignItems: 'flex-start', lineHeight: 1.4, borderBottom: `1px solid ${C.light}` }}>
-                <CheckCircle size={11} color={cat.color} style={{ flexShrink: 0, marginTop: 2 }} />
-                {it}
-              </div>
-            ))}
           </div>
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
-        {[
-          { v: '90%',    l: 'Usuarios capacitados',    sub: 'meta plan 1.5.3',         color: C.primary },
-          { v: '>80%',   l: 'Índice de adopción',      sub: 'post Go-Live (encuestas)', color: C.secondary },
-          { v: '95%',    l: 'Tickets resueltos en SLA', sub: 'soporte 40 días post-impl', color: C.success },
-          { v: '99.97%', l: 'Disponibilidad Azure',    sub: 'SLA contractual mensual',  color: C.warning },
-        ].map(k => (
-          <div key={k.l} style={{ background: C.white, borderRadius: 10, padding: '14px 18px', boxShadow: '0 1px 5px rgba(0,0,0,0.07)', borderTop: `3px solid ${k.color}` }}>
-            <div style={{ fontSize: 26, fontWeight: 900, color: k.color }}>{k.v}</div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: C.text, marginTop: 4 }}>{k.l}</div>
-            <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{k.sub}</div>
-          </div>
-        ))}
+      {/* Metodología */}
+      <div>
+        <div style={{ color: C.muted, fontSize: 10, letterSpacing: 2, fontWeight: 700, marginBottom: 10, textTransform: 'uppercase' }}>Metodología</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          {metodologia.map(m => (
+            <div key={m.label} style={{ background: C.white, borderRadius: 8, padding: '10px 14px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', display: 'flex', gap: 10, alignItems: 'baseline' }}>
+              <span style={{ color: C.primary, fontWeight: 800, fontSize: 11, flexShrink: 0, minWidth: 72 }}>{m.label}</span>
+              <span style={{ color: C.text, fontSize: 12, lineHeight: 1.5 }}>{m.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Fases */}
+      <div style={{ background: C.primary, borderRadius: 10, padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 14 }}>
+        <span style={{ color: 'rgba(241,148,138,0.75)', fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', flexShrink: 0 }}>5 Fases</span>
+        <div style={{ display: 'flex', gap: 8, flex: 1, justifyContent: 'space-between' }}>
+          {['1. Análisis', '2. Diseño', '3. Desarrollo', '4. Pruebas', '5. Validación'].map((f, i) => (
+            <div key={f} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 6, padding: '5px 12px', color: C.white, fontSize: 11.5, fontWeight: 600, textAlign: 'center' }}>
+              {f}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
