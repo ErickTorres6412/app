@@ -6,15 +6,15 @@ export function SlideRiesgos() {
   const entregables = [
     { icon: <FileText size={20} color={C.primary} />, titulo: 'Investigación previa', desc: 'Qué soluciones existen hoy en alojamiento, emparejamiento e identidad.', color: C.primary },
     { icon: <BarChart2 size={20} color={C.secondary} />, titulo: 'Análisis y diseño', desc: 'Requerimientos, arquitectura y modelo de la plataforma.', color: C.secondary },
-    { icon: <Code size={20} color={C.warning} />, titulo: 'Prototipo funcional', desc: 'App web operativa: registro, búsqueda de alojamiento e interacción.', color: C.warning },
+    { icon: <Code size={20} color={C.warning} />, titulo: 'Producto funcional', desc: 'App web operativa: registro, búsqueda de alojamiento e interacción.', color: C.warning },
     { icon: <TestTube size={20} color={C.success} />, titulo: 'Pruebas y validación', desc: 'Resultados de funcionalidad, usabilidad y desempeño del sistema.', color: C.success },
     { icon: <BookOpen size={20} color={C.muted} />, titulo: 'Documento final', desc: 'Conclusiones y mejoras futuras del proyecto.', color: C.muted },
   ]
 
   const fases = [
-    { actividad: 'Investigación y estado del arte', meses: 3, color: C.primary },
-    { actividad: 'Datos y requerimientos', meses: 2, color: C.secondary },
-    { actividad: 'Desarrollo y algoritmo', meses: 4, color: C.warning },
+    { actividad: 'Investigación', meses: 3, color: C.primary },
+    { actividad: 'Requerimientos', meses: 1, color: C.secondary },
+    { actividad: 'Desarrollo y algoritmo', meses: 5, color: C.warning },
     { actividad: 'Pruebas y evaluación', meses: 1, color: C.success },
     { actividad: 'Revisión y corrección', meses: 1, color: C.muted },
   ]
