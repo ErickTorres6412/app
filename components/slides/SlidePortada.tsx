@@ -68,7 +68,7 @@ export function SlidePortada() {
         {[
           { icon: <Users size={18} color={C.accent} />, v: 'Grupo 55' },
         ].map(s => (
-          <div style={{ textAlign: 'center' }}>
+          <div key={s.v} style={{ textAlign: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 4 }}>{s.icon}</div>
             <div style={{ color: C.white, fontSize: 16, fontWeight: 800 }}>{s.v}</div>
           </div>
