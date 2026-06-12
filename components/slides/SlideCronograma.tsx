@@ -1,75 +1,76 @@
 'use client'
-import { ShieldCheck, Users, Cpu } from 'lucide-react'
+import { ShieldCheck, Sparkles, Users, UserPlus, Gauge, HeartHandshake, ArrowRight } from 'lucide-react'
 import { C } from './constants'
 import { Label } from './shared'
 
 export function SlideCronograma() {
   const pilares = [
     {
-      icon: <ShieldCheck size={22} color={C.primary} />,
-      titulo: 'Pertenencia Institucional',
-      desc: 'Garantiza que todos sus usuarios forman parte activa de la comunidad universitaria costarricense, mediante validación de carné estudiantil y confirmación de identidad.',
+      icon: <ShieldCheck size={24} color={C.primary} />,
+      titulo: 'Pertenencia institucional',
+      desc: 'Solo comunidad universitaria, con identidad verificada.',
       color: C.primary,
     },
     {
-      icon: <Cpu size={22} color={C.secondary} />,
-      titulo: 'Emparejamiento Inteligente',
-      desc: 'Analiza de manera automática gustos, hábitos y preferencias de estilo de vida para predecir la compatibilidad entre perfiles, maximizando las posibilidades de una convivencia armoniosa.',
+      icon: <Sparkles size={24} color={C.secondary} />,
+      titulo: 'Emparejamiento inteligente',
+      desc: 'Compatibilidad según hábitos y estilo de vida.',
       color: C.secondary,
     },
     {
-      icon: <Users size={22} color={C.warning} />,
-      titulo: 'Comunidad Activa',
-      desc: 'Más allá de la búsqueda de vivienda, ofrece espacios de interacción social donde los estudiantes pueden formar grupos de interés, participar en foros temáticos y conectar.',
+      icon: <Users size={24} color={C.warning} />,
+      titulo: 'Comunidad activa',
+      desc: 'Foros y grupos de interés más allá de la vivienda.',
       color: C.warning,
     },
   ]
 
-  const stack = [
-    { layer: 'Frontend', tech: 'Next.js + TypeScript', color: C.primary },
-    { layer: 'Backend', tech: 'NestJS + TypeScript', color: C.secondary },
-    { layer: 'Base de datos', tech: 'PostgreSQL + Prisma ORM', color: C.warning },
-    { layer: 'IA / ML', tech: 'Módulo emparejamiento híbrido', color: C.success },
-    { layer: 'Verificación', tech: 'Carné estudiantil + correo institucional', color: C.muted },
+  const flujo = [
+    { icon: <UserPlus size={20} color={C.primary} />, paso: 'Entrada', desc: 'Registro y preferencias', color: C.primary },
+    { icon: <Sparkles size={20} color={C.secondary} />, paso: 'Procesamiento', desc: 'Cálculo de afinidad', color: C.secondary },
+    { icon: <Gauge size={20} color={C.warning} />, paso: 'Análisis', desc: 'Puntaje de compatibilidad', color: C.warning },
+    { icon: <HeartHandshake size={20} color={C.success} />, paso: 'Resultados', desc: 'Compañeros y alojamiento ideales', color: C.success },
   ]
 
   return (
-    <div style={{ padding: '44px 60px', background: C.bgAlt, height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ padding: '46px 60px', background: C.bgAlt, height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 26 }}>
       <div>
         <Label>Propuesta de Solución</Label>
-        <h2 style={{ color: C.primary, fontSize: 26, fontWeight: 800, margin: 0 }}>
-          COINKI: Tres pilares fundamentales
+        <h2 style={{ color: C.primary, fontSize: 27, fontWeight: 800, margin: 0 }}>
+          Una red, tres pilares
         </h2>
       </div>
 
       {/* Pilares */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, flex: 1 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, flex: 1 }}>
         {pilares.map(p => (
-          <div key={p.titulo} style={{ background: C.white, borderRadius: 12, padding: '20px 18px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', borderTop: `4px solid ${p.color}`, display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ background: `${p.color}15`, borderRadius: 8, padding: 8 }}>{p.icon}</div>
-              <span style={{ fontWeight: 700, color: C.text, fontSize: 14, lineHeight: 1.3 }}>{p.titulo}</span>
-            </div>
-            <p style={{ color: C.muted, fontSize: 12.5, lineHeight: 1.6, margin: 0 }}>{p.desc}</p>
+          <div key={p.titulo} style={{ background: C.white, borderRadius: 14, padding: '24px 22px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', borderTop: `4px solid ${p.color}`, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ background: `${p.color}15`, borderRadius: 12, padding: 12, width: 'fit-content' }}>{p.icon}</div>
+            <span style={{ fontWeight: 800, color: C.text, fontSize: 16, lineHeight: 1.25 }}>{p.titulo}</span>
+            <p style={{ color: C.muted, fontSize: 13.5, lineHeight: 1.55, margin: 0 }}>{p.desc}</p>
           </div>
         ))}
       </div>
 
-      {/* Stack técnico */}
+      {/* Flujo: cómo funciona */}
       <div>
-        <div style={{ color: C.muted, fontSize: 10, letterSpacing: 2, fontWeight: 700, marginBottom: 10, textTransform: 'uppercase' }}>Stack Técnico</div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {stack.map(s => (
-            <div key={s.layer} style={{ background: C.white, borderRadius: 8, padding: '8px 14px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', borderLeft: `3px solid ${s.color}`, display: 'flex', gap: 8, alignItems: 'center' }}>
-              <span style={{ color: s.color, fontSize: 10, fontWeight: 700 }}>{s.layer}</span>
-              <span style={{ color: C.text, fontSize: 11.5, fontWeight: 600 }}>{s.tech}</span>
+        <div style={{ color: C.muted, fontSize: 10, letterSpacing: 2, fontWeight: 700, marginBottom: 14, textTransform: 'uppercase' }}>¿Cómo funciona?</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          {flujo.map((f, i) => (
+            <div key={f.paso} style={{ display: 'contents' }}>
+              <div style={{ flex: 1, background: C.white, borderRadius: 12, padding: '14px 16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', borderBottom: `3px solid ${f.color}`, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                  <div style={{ background: `${f.color}15`, borderRadius: 8, padding: 7, display: 'flex' }}>{f.icon}</div>
+                  <span style={{ fontWeight: 800, color: f.color, fontSize: 13.5 }}>{f.paso}</span>
+                </div>
+                <span style={{ color: C.muted, fontSize: 12, lineHeight: 1.4 }}>{f.desc}</span>
+              </div>
+              {i < flujo.length - 1 && (
+                <ArrowRight size={20} color={C.accent} style={{ flexShrink: 0 }} />
+              )}
             </div>
           ))}
         </div>
-      </div>
-
-      <div style={{ padding: '10px 16px', background: `${C.primary}10`, borderRadius: 8, border: `1px solid ${C.primary}20`, fontSize: 12, color: C.primary, lineHeight: 1.5 }}>
-        <strong>Arquitectura desacoplada:</strong> cliente Next.js → API REST → servidor NestJS → PostgreSQL/Prisma, con módulo de IA de emparejamiento independiente.
       </div>
     </div>
   )
