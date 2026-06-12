@@ -28,13 +28,12 @@ export function SlidePortada() {
           <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, letterSpacing: 2, fontWeight: 700, marginBottom: 10, textTransform: 'uppercase' }}>Proponentes</div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             {[
-              { name: 'Erick Torres Hernández', sections: 'Secciones 1–4' },
-              { name: 'Josué Montero Villalobos', sections: 'Secciones 5–8' },
-              { name: 'Pablo A. Alvarado Umaña', sections: 'Secciones 9–12' },
+              { name: 'Erick Torres Hernández' },
+              { name: 'Josué Montero Villalobos' },
+              { name: 'Pablo A. Alvarado Umaña' },
             ].map(p => (
               <div key={p.name} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '8px 16px' }}>
                 <div style={{ color: C.white, fontSize: 13, fontWeight: 700 }}>{p.name}</div>
-                <div style={{ color: C.accent, fontSize: 10, marginTop: 2 }}>{p.sections}</div>
               </div>
             ))}
           </div>
@@ -44,7 +43,7 @@ export function SlidePortada() {
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
           {[
             { role: 'Tutor', name: 'Pablo Gamboa Camacho' },
-            { role: 'Asesor 1', name: 'Rodolfo A. Sánchez Sánchez' },
+            { role: 'Asesor 1', name: 'Rodolfo Sánchez Sánchez' },
             { role: 'Asesor 2', name: 'José Pablo Carvajal Chaves' },
             { role: 'Prof. Invest.', name: 'Johnny Villalobos M.' },
           ].map(c => (
@@ -67,14 +66,11 @@ export function SlidePortada() {
         </div>
 
         {[
-          { icon: <Users size={18} color={C.accent} />, v: '3 presentadores', l: 'Grupo 55' },
-          { icon: <Clock size={18} color={C.accent} />, v: '~16.5 min', l: 'Tiempo total' },
-          { icon: <BookOpen size={18} color={C.accent} />, v: '12 secciones', l: 'Anteproyecto' },
+          { icon: <Users size={18} color={C.accent} />, v: 'Grupo 55' },
         ].map(s => (
-          <div key={s.l} style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 4 }}>{s.icon}</div>
             <div style={{ color: C.white, fontSize: 16, fontWeight: 800 }}>{s.v}</div>
-            <div style={{ color: 'rgba(241,148,138,0.65)', fontSize: 10, marginTop: 2 }}>{s.l}</div>
           </div>
         ))}
       </div>
