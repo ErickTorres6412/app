@@ -9,7 +9,7 @@ export function SlidePortada() {
         {/* Badge */}
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(241,148,138,0.18)', border: '1px solid rgba(241,148,138,0.35)', borderRadius: 6, padding: '6px 14px', marginBottom: 32, width: 'fit-content' }}>
           <BookOpen size={12} color={C.accent} />
-          <span style={{ color: C.accent, fontSize: 11, letterSpacing: 2, fontWeight: 700 }}>ANTEPROYECTO · GRUPO 55 · EIF501 · I CICLO 2026</span>
+          <span style={{ color: C.accent, fontSize: 11, letterSpacing: 2, fontWeight: 700 }}> GRUPO 55 · EIF501 · I CICLO 2026</span>
         </div>
 
         {/* Title */}
@@ -68,7 +68,7 @@ export function SlidePortada() {
         {[
           { icon: <Users size={18} color={C.accent} />, v: 'Grupo 55' },
         ].map(s => (
-          <div style={{ textAlign: 'center' }}>
+          <div key={s.v} style={{ textAlign: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 4 }}>{s.icon}</div>
             <div style={{ color: C.white, fontSize: 16, fontWeight: 800 }}>{s.v}</div>
           </div>

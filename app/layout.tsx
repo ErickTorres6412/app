@@ -13,8 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "COINKI: Red de alojamiento y comunidad universitaria | EIF501 UNA",
+  title: "COINKI",
   description: "Presentación de Anteproyecto: COINKI — Plataforma web de alojamiento compartido y comunidad universitaria. Universidad Nacional de Costa Rica, EIF501, I Ciclo 2026.",
+  icons: {
+    icon: '/image.png',
+  },
 };
 
 export default function RootLayout({
