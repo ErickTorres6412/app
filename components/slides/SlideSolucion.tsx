@@ -12,7 +12,7 @@ export function SlideSolucion() {
     {
       icon: <ShieldCheck size={20} color={C.secondary} />,
       titulo: 'Valor institucional y social',
-      desc: 'Ofrece un espacio seguro y verificado frente a los canales informales que utilizan actualmente los estudiantes.',
+      desc: 'Ofrece un espacio seguro y verificado, a diferencia de los canales informales que utilizan actualmente los estudiantes.',
     },
     {
       icon: <Users size={20} color={C.warning} />,

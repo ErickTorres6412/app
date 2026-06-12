@@ -30,7 +30,7 @@ export function SlidePortada() {
             {[
               { name: 'Erick Torres Hernández' },
               { name: 'Josué Montero Villalobos' },
-              { name: 'Pablo A. Alvarado Umaña' },
+              { name: 'Pablo Alvarado Umaña' },
             ].map(p => (
               <div key={p.name} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '8px 16px' }}>
                 <div style={{ color: C.white, fontSize: 13, fontWeight: 700 }}>{p.name}</div>
