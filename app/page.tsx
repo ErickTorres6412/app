@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { C } from '../components/slides/constants'
 import { SlidePortada } from '../components/slides/SlidePortada'
@@ -26,7 +26,6 @@ const SLIDES = [
 export default function Home() {
   const [idx, setIdx] = useState(0)
   const [dir, setDir] = useState<'fwd' | 'bck'>('fwd')
-  const touchX = useRef<number | null>(null)
 
   const go = useCallback((next: number) => {
     if (next < 0 || next >= SLIDES.length) return
@@ -34,38 +33,14 @@ export default function Home() {
     setIdx(next)
   }, [idx])
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(idx + 1) }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); go(idx - 1) }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [idx, go])
-
-  const onTouchStart = (e: React.TouchEvent) => { touchX.current = e.touches[0].clientX }
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchX.current === null) return
-    const dx = touchX.current - e.changedTouches[0].clientX
-    if (Math.abs(dx) > 50) go(idx + (dx > 0 ? 1 : -1))
-    touchX.current = null
-  }
-
   const Slide = SLIDES[idx].component
   const pct = ((idx + 1) / SLIDES.length) * 100
 
   return (
     <div
       style={{ position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column', background: C.text }}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
     >
-      <div
-        key={`${idx}-${dir}`}
-        className={`slide-${dir}`}
-        style={{ flex: 1, overflow: 'hidden' }}
-        onClick={() => go(idx + 1)}
-      >
+      <div key={`${idx}-${dir}`} className={`slide-${dir}`} style={{ flex: 1, overflow: 'hidden' }}>
         <Slide />
       </div>
 
@@ -79,12 +54,7 @@ export default function Home() {
           <ChevronLeft size={18} />
         </button>
 
-        <div style={{ display: 'flex', gap: 6, flex: 1, justifyContent: 'center' }}>
-          {SLIDES.map((s, i) => (
-            <button key={s.id} onClick={e => { e.stopPropagation(); go(i) }} title={s.label}
-              style={{ background: i === idx ? C.accent : 'rgba(255,255,255,0.2)', border: 'none', borderRadius: 3, cursor: 'pointer', width: i === idx ? 22 : 8, height: 8, transition: 'all 0.22s ease', padding: 0, flexShrink: 0 }} />
-          ))}
-        </div>
+        <div style={{ flex: 1 }} />
 
         <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, flexShrink: 0 }}>
           {SLIDES[idx].label} · {idx + 1} / {SLIDES.length}
