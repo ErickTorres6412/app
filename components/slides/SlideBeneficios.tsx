@@ -7,29 +7,28 @@ export function SlideBeneficios() {
     {
       icon: <Brain size={20} color={C.primary} />,
       titulo: 'Compatibilidad de convivencia',
-      desc: 'Fenómeno multidimensional (sueño, ruido, limpieza, socialización), apoyado en el modelo de personalidad OCEAN para la predicción de compatibilidad.',
+      desc: 'Convivir bien depende de múltiples factores: horarios, tolerancia al ruido, orden y socialización. El modelo OCEAN mide rasgos de personalidad para predecir si dos personas pueden vivir juntas armoniosamente.',
     },
     {
       icon: <Search size={20} color={C.secondary} />,
       titulo: 'Sistemas de recomendación',
-      desc: 'Filtrado basado en contenido, filtrado colaborativo y modelos híbridos, adaptados al contexto de emparejamiento de compañeros de convivencia.',
+      desc: 'Algoritmos tipo Netflix o Spotify, adaptados a personas. COINKI combina dos enfoques: comparar perfiles directamente (contenido) y aprender del comportamiento de usuarios similares (colaborativo).',
     },
     {
       icon: <Layers size={20} color={C.warning} />,
       titulo: 'Algoritmo híbrido de dos capas',
-      desc: 'Una capa de contenido (variables del perfil) y una colaborativa (comportamiento en la plataforma), mitigando el problema del inicio en frío.',
+      desc: 'Capa 1: analiza el perfil declarado (hábitos, preferencias). Capa 2: aprende del comportamiento dentro de la plataforma. Si el usuario es nuevo y no hay historial, la Capa 1 lo sostiene — resuelve el "inicio en frío".',
     },
     {
       icon: <FlaskConical size={20} color={C.success} />,
       titulo: 'Arquitectura desacoplada y verificación',
-      desc: 'Cliente y servidor vía API REST, con validación de carné estudiantil y dominio de correo institucional de la universidad.',
+      desc: 'Frontend (Next.js) y backend (NestJS) son independientes y se comunican vía API REST. El acceso requiere verificación de identidad universitaria: carné estudiantil o correo institucional.',
     },
   ]
 
   const metodologia = [
     { label: 'Tipo', value: 'Aplicada · Mixta (cuantitativa + cualitativa)' },
     { label: 'Recolección', value: 'Revisión bibliográfica, entrevistas semiestructuradas, grupos de discusión' },
-    { label: 'Herramientas', value: 'Métricas: precisión, exhaustividad, puntuación F1 + encuestas de satisfacción' },
     { label: 'Gestión', value: 'Metodología ágil Scrum en ciclos iterativos con perfiles sintéticos' },
   ]
 
@@ -58,7 +57,7 @@ export function SlideBeneficios() {
       {/* Metodología */}
       <div>
         <div style={{ color: C.muted, fontSize: 10, letterSpacing: 2, fontWeight: 700, marginBottom: 10, textTransform: 'uppercase' }}>Metodología</div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {metodologia.map(m => (
             <div key={m.label} style={{ background: C.white, borderRadius: 8, padding: '10px 14px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', display: 'flex', gap: 10, alignItems: 'baseline' }}>
               <span style={{ color: C.primary, fontWeight: 800, fontSize: 11, flexShrink: 0, minWidth: 72 }}>{m.label}</span>
