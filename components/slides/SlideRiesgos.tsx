@@ -12,9 +12,9 @@ export function SlideRiesgos() {
   ]
 
   const fases = [
-    { actividad: 'Investigación y estado del arte', meses: 3, color: C.primary },
-    { actividad: 'Datos y requerimientos', meses: 2, color: C.secondary },
-    { actividad: 'Desarrollo y algoritmo', meses: 4, color: C.warning },
+    { actividad: 'Investigación', meses: 3, color: C.primary },
+    { actividad: 'Requerimientos', meses: 1, color: C.secondary },
+    { actividad: 'Desarrollo y algoritmo', meses: 5, color: C.warning },
     { actividad: 'Pruebas y evaluación', meses: 1, color: C.success },
     { actividad: 'Revisión y corrección', meses: 1, color: C.muted },
   ]
