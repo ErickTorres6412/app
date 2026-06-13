@@ -7,6 +7,7 @@ import { SlidePortada } from '../components/slides/SlidePortada'
 import { SlideProblema } from '../components/slides/SlideProblema'
 import { SlideSolucion } from '../components/slides/SlideSolucion'
 import { SlideInversion } from '../components/slides/SlideInversion'
+import { SlideObjetivos } from '../components/slides/SlideObjetivos'
 import { SlideBeneficios } from '../components/slides/SlideBeneficios'
 import { SlideCronograma } from '../components/slides/SlideCronograma'
 import { SlideRiesgos } from '../components/slides/SlideRiesgos'
@@ -16,8 +17,9 @@ const SLIDES = [
   { id: 'portada',    label: 'Portada',           component: SlidePortada },
   { id: 'contexto',   label: 'Contexto',           component: SlideProblema },
   { id: 'problema',   label: 'Problema',           component: SlideSolucion },
-  { id: 'objetivos',  label: 'Objetivos',          component: SlideInversion },
-  { id: 'marco',      label: 'Marco y Metodología', component: SlideBeneficios },
+  { id: 'obj-general',  label: 'Objetivo General',    component: SlideInversion },
+  { id: 'obj-especif',  label: 'Obj. Específicos',   component: SlideObjetivos },
+  { id: 'marco',        label: 'Marco y Metodología', component: SlideBeneficios },
   { id: 'solucion',   label: 'Propuesta COINKI',   component: SlideCronograma },
   { id: 'resultados', label: 'Resultados',         component: SlideRiesgos },
   { id: 'cierre',     label: 'Cierre / Q&A',       component: SlideQA },
