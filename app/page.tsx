@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { C } from '../components/slides/constants'
 import { SlidePortada } from '../components/slides/SlidePortada'
@@ -9,6 +9,7 @@ import { SlideSolucion } from '../components/slides/SlideSolucion'
 import { SlideInversion } from '../components/slides/SlideInversion'
 import { SlideObjetivos } from '../components/slides/SlideObjetivos'
 import { SlideBeneficios } from '../components/slides/SlideBeneficios'
+import { SlideMetodologia } from '../components/slides/SlideMetodologia'
 import { SlideCronograma } from '../components/slides/SlideCronograma'
 import { SlideRiesgos } from '../components/slides/SlideRiesgos'
 import { SlideQA } from '../components/slides/SlideQA'
@@ -19,8 +20,9 @@ const SLIDES = [
   { id: 'problema',   label: 'Problema',           component: SlideSolucion },
   { id: 'obj-general',  label: 'Objetivo General',    component: SlideInversion },
   { id: 'obj-especif',  label: 'Obj. Específicos',   component: SlideObjetivos },
-  { id: 'marco',        label: 'Marco y Metodología', component: SlideBeneficios },
-  { id: 'solucion',   label: 'Propuesta COINKI',   component: SlideCronograma },
+  { id: 'marco',        label: 'Marco Conceptual',    component: SlideBeneficios },
+  { id: 'metodologia',  label: 'Metodología',         component: SlideMetodologia },
+  { id: 'solucion',     label: 'Propuesta COINKI',    component: SlideCronograma },
   { id: 'resultados', label: 'Resultados',         component: SlideRiesgos },
   { id: 'cierre',     label: 'Cierre / Q&A',       component: SlideQA },
 ]
@@ -34,6 +36,15 @@ export default function Home() {
     setDir(next > idx ? 'fwd' : 'bck')
     setIdx(next)
   }, [idx])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(idx + 1)
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(idx - 1)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [idx, go])
 
   const Slide = SLIDES[idx].component
   const pct = ((idx + 1) / SLIDES.length) * 100
