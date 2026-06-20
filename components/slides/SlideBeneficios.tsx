@@ -22,7 +22,7 @@ export function SlideBeneficios() {
     {
       icon: <FlaskConical size={20} color={C.success} />,
       titulo: 'Arquitectura desacoplada y verificación',
-      desc: 'Frontend (Next.js) y backend (NestJS) son independientes y se comunican vía API REST. El acceso requiere verificación de identidad universitaria mediante mecanismos institucionales, garantizando que solo estudiantes verificados puedan usar la plataforma.',
+      desc: 'El frontend y el backend son módulos independientes que se comunican vía API REST. El acceso requiere verificación de identidad universitaria mediante mecanismos institucionales, garantizando que solo estudiantes verificados puedan usar la plataforma.',
     },
   ]
 
